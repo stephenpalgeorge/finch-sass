@@ -1,0 +1,20 @@
+{
+  "name": "finch-utils",
+  "version": "1.0.0",
+  "description": "A sass utilities library",
+  "main": "index.scss",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sass",
+    "scss",
+    "css",
+    "styles",
+    "stylesheets",
+    "utilities",
+    "mixins"
+  ],
+  "author": "stephen pal-george",
+  "license": "ISC"
+}
