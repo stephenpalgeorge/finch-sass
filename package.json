@@ -16,5 +16,8 @@
     "mixins"
   ],
   "author": "stephen pal-george",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "sass": "^1.54.8"
+  }
 }
