@@ -4,7 +4,7 @@
   "description": "A sass utilities library",
   "main": "index.scss",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "sass "
   },
   "keywords": [
     "sass",

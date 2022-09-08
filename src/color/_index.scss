@@ -1,0 +1,46 @@
+@use 'sass:list';
+@use 'sass:map';
+@use '../global/config';
+@use 'variables' as *;
+@use 'functions' as *;
+
+$finch-colors: (
+  red: $finch-red,
+  blue: $finch-blue,
+  green: $finch-green,
+  yellow: $finch-yellow,
+  pink: $finch-pink,
+  purple: $finch-purple,
+  orange: $finch-orange,
+  indigo: $finch-indigo,
+  violet: $finch-violet,
+  light: $finch-light,
+  dark: $finch-dark,
+);
+$colors: () !default;
+$palette: map.merge($finch-colors, $colors);
+
+$shades-map: ();
+@each $name, $clr in $palette {
+  $shades-map: map.set($shades-map, $name, create-shades($clr));
+}
+@debug $shades-map;
+
+/// The 'use' function provides a shorthand for accessing a value in the `$palette` map
+/// that the color module defines. It also accepts an optional `$shade` parameter, that will
+/// adjust the color to be lighter (1000) or darker (0).
+/// @param $key one of the keys from the color-palette map.
+/// @param $shade {Number} a number from 0 - 1000, in increments of 100.
+///
+@function use($key, $shade: null) {
+  $spec-values: list.join(config.$global-values, (currentColor));
+  // if the given value is one of the `global-values`, or one of the `spec-values` return it immediately:
+  @if list.index($spec-values, $key) { @return $key; }
+  // try and find the value in the map and either return it, or handle the error case below.
+  $value: map.get($palette, $key);
+  @if $shade { $value: map.get($shades-map, $key, $shade); }
+  @if $value { @return $value; }
+
+  @warn 'No color found for key "#{$key} / #{$shade}"';
+  @return null;
+}
