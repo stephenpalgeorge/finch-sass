@@ -1,0 +1,206 @@
+// sass modules
+@use 'sass:color';
+@use 'sass:list';
+@use 'sass:map';
+// global imports
+@use '../global/config';
+@use '../global/mixins' as m;
+// local imports
+@use 'variables' as *;
+@use 'functions' as *;
+
+// module config
+$-finch-utilities: (
+  color: false,
+  background-color: false,
+);
+$utils: () !default;
+$utilities: map.merge($-finch-utilities, $utils);
+
+$-finch-responsive: (
+  color: false,
+  background-color: false,
+);
+$responsive-utils: () !default;
+$responsive: map.merge($-finch-responsive, $responsive-utils);
+
+// the default finch colours
+// @see './variables.scss' for colour and a11y information
+$-finch-colors: (
+  red: $finch-red,
+  blue: $finch-blue,
+  green: $finch-green,
+  yellow: $finch-yellow,
+  pink: $finch-pink,
+  purple: $finch-purple,
+  orange: $finch-orange,
+  indigo: $finch-indigo,
+  violet: $finch-violet,
+  light: $finch-light,
+  dark: $finch-dark,
+);
+// this empty map is a placeholder, intended for the user to
+// pass in a map of their own brand colours.
+$colors: () !default;
+// merging the two maps, with the user-provided map coming second,
+// means the user's colours will override the default finch colours if
+// any of them share the same key.
+$-palette: map.merge($-finch-colors, $colors);
+
+// initialise an empty map
+$-shades-map: ();
+// every colour in the palette will become a key in the $shades map,
+// the value of which will be another map, containing the 11 shaded
+// values of the original colour.
+@each $name, $clr in $-palette {
+  $-shades-map: map.set($-shades-map, $name, create-shades($clr));
+}
+
+/// The 'use' function provides a shorthand for accessing a value in the `$palette` map
+/// that the color module defines. It also accepts an optional `$shade` parameter, that will
+/// adjust the color to be lighter (1000) or darker (0).
+/// @param $key one of the keys from the color-palette map.
+/// @param $shade {Number} a number from 0 - 1000, in increments of 100.
+///
+@function use($key, $shade: null) {
+  $spec-values: list.join(config.$global-values, (currentColor));
+  // if the given value is one of the `global-values`, or one of the `spec-values` return it immediately:
+  @if list.index($spec-values, $key) { @return $key; }
+  // try and find the value in the map and either return it, or handle the error case below.
+  $value: map.get($-palette, $key);
+  @if $shade { $value: map.get($-shades-map, $key, $shade); }
+  @if $value { @return $value; }
+
+  @warn 'No color found for key "#{$key} / #{$shade}"';
+  @return null;
+}
+
+/// COMPLEMENTARY
+/// ----------
+/// Returns a color or map of shades for the color that is the complement of the specified color.
+/// @param $color {Color} the base color that will be used to calculate the complement and its shades.
+/// @param $shades {Boolean} determines if the entire 'shades' map should be returned, or just one specific colour value.
+/// @return {Map} a map of 'base' and 'complement', which will have values of either a single colour, or of a map of shades.
+@function complementary($clr, $shades: false) {
+  // generate the complementary colour
+  $complement: color.adjust($clr, $hue: 180deg);
+
+  // if $shades has been passed as true, generate and return the
+  // shades map for the complementary colour, and the initial 'base' colour
+  @if $shades {
+    $base-shades: create-shades($clr);
+    $complement-shades: create-shades($complement);
+    @return (
+      base: $base-shades,
+      complement: $complement-shades,
+    );
+  }
+  // otherwise, just return the colours
+  @return (base: $clr, complement: $complement);
+
+  // or handle the error case
+  @warn 'Could not get complement for color "#{$clr}"';
+  @return null;
+}
+
+/// ANALOGOUS
+/// ----------
+/// Returns a color, or map of shades based on the 2 'analogous' colors of the specified color.
+/// @param $color {Color} the base color that will be used to calculate the analogous palette and their shades.
+/// @param $shades {Boolean} determines whether or not the shades maps should be created.
+/// @param $dir {String} one of either 'clockwise' or 'anti-clockwise/anticlockwise' will be understood and will determine how
+/// the hue is adjusted.
+/// @return {Color | Map} a single color value by default, or the whole map of shades for both analogous colours when `$maps` is `true`.
+@function analogous($clr, $shades: base, $dir: 'clockwise') {
+  $interval: 30deg;
+  @if list.index(('anti-clockwise', 'anticlockwise'), $dir) {
+    $interval: -30deg;
+  }
+
+  $secondary-color: color.adjust($clr, $hue: $interval);
+  $tertiary-color: color.adjust($clr, $hue, $interval * 2);
+
+  @if $shades {
+    $base-shades: create-shades($clr);
+    $secondary-shades: create-shades($secondary-color);
+    $tertiary-shades: create-shades($tertiary-color);
+    @return (
+      base: $base-shades,
+      secondary: $secondary-shades,
+      tertiary: $tertiary-shades,
+    );
+  }
+
+  @return (base: $clr, secondary: $secondary-color, tertiary: $tertiary-color);
+
+  @warn 'Could not generate analoguos colors for "#{$clr}"';
+  @return null;
+}
+
+/// TRIADIC
+/// ----------
+/// Returns a color, or map of shades based on the 2 other 'triadic' colors that extrapolate from the 'base'.
+/// @param $color {Color} the base color that will be used to calculate the triadic palette and their shades.
+/// @param $shades {Boolean} determines if the entire 'shades' map should be returned for each color, or just the color values.
+/// @return {Map} either a map of 3 colors, or a map of 3 maps (that have all the colors shades).
+@function triadic($clr, $shades: false) {
+  $secondary-color: color.adjust($clr, $hue: 120deg);
+  $tertiary-color: color.adjust($clr, $hue: 240deg);
+
+  @if $shades {
+    $base-shades: create-shades($clr);
+    $secondary-shades: create-shades($secondary-color);
+    $tertiary-shades: create-shades($tertiary-color);
+    @return (
+      base: $base-shades,
+      secondary: $secondary-shades,
+      tertiary: $tertiary-shades,
+    );
+  }
+
+  @return (base: $clr, secondary: $secondary-color, tertiary: $tertiary-color);
+
+  @warn 'Could not generate triadic colors for "#{$clr}"';
+  @return null;
+}
+
+/// TETRADIC
+/// ----------
+/// Returns a color, or may of shades based on the 3 other 'tetradic' colors that extrapolate from the 'base'.
+/// @param $color {Color} the base color that will be used to calculate the triadic palette and their shades.
+/// @param $key {String} one of 'secondary', 'tertiary' or 'quaternary' - representing which of the 3 colors should be referenced.
+/// @param $shade {Number} a number from 0 - 1000, in increments of 100 (e.g. 300, 400, 500...) that represents the lightness
+/// value of the color that is to be returned (where `0` is `black` and `1` is `white`).
+/// @param $maps {Boolean} determines if the entire 'shades' map should be returned, or just one specific color value.
+/// @return {Color | Map} a single color value by default, or the whole map of shades for all of the other tetradic colours when `$maps` is `true`.
+@function tetradic($clr, $shades: false) {
+  $secondary-color: color.adjust($clr, $hue: 90deg);
+  $tertiary-color: color.adjust($clr, $hue: 180deg);
+  $quartenary-color: color.adjust($clr, $hue: 270deg);
+
+  @if $shades {
+    $base-shades: create-shades($base);
+    $secondary-shades: create-shades($secondary-color);
+    $tertiary-shades: create-shades($tertiary-color);
+    $quartenary-shades: create-shades($quartenary-color);
+    @return (
+      base: $base-shades,
+      secondary: $secondary-shades,
+      tertiary: $tertiary-shades,
+      quartenary: $quartenary-shades,
+    );
+  }
+
+  @return (base: $clr, $secondary: $secondary-color, tertiary: $tertiary-color, quartenary: $quartenary-color);
+
+  @warn 'Could not create tetradic pallette for color "#{$clr}"';
+  @return null;
+}
+
+/// UTILITIES
+/// ----------
+@each $prop, $flag in $utilities {
+  @if $flag {
+    @include m.gen-utils($prop, $-palette, $responsive: map.get($responsive, $prop));
+  }
+}

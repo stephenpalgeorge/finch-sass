@@ -1,2 +1,15 @@
+@use 'sass:map';
+
 // global values are values that can be set on *any* css property.
 $global-values: (initial, inherit, unset);
+
+// BREAKPOINTS
+// ----------
+$-finch-breakpoints: (
+  sm: 767px,
+  md: 991px,
+  lg: 1280px,
+  xl: 1440px,
+);
+$breakpoints: () !default;
+$breaks: map.merge($-finch-breakpoints, $breakpoints);

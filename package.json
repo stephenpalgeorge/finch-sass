@@ -2,9 +2,10 @@
   "name": "finch-utils",
   "version": "1.0.0",
   "description": "A sass utilities library",
-  "main": "index.scss",
+  "main": "src/index.scss",
   "scripts": {
-    "test": "sass "
+    "build": "rm -rf build && sass src:build",
+    "build:demo": "rm -rf demo/styles && sass demo/scss:demo/styles && http-server -c-1 demo"
   },
   "keywords": [
     "sass",
@@ -18,6 +19,7 @@
   "author": "stephen pal-george",
   "license": "ISC",
   "devDependencies": {
+    "http-server": "^14.1.1",
     "sass": "^1.54.8"
   }
 }
