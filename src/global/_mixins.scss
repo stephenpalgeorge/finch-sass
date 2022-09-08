@@ -18,13 +18,13 @@
       @each $point, $pixels in config.$breaks {
         @each $val in $values {
           .#{$label}\:#{$val}\@#{point} {
-            @media screen and (max-width: $pixels) {
+            @media screen and (min-width: $pixels) {
               #{$label}: $val;
             }
           }
 
           .#{$label}\:#{$val}\@#{$point}\! {
-            @media screen and (max-width: $pixels) {
+            @media screen and (min-width: $pixels) {
               #{$label}: $val !important;
             }
           }
@@ -44,13 +44,13 @@
       @each $point, $pixels in config.$breaks {
         @each $key, $val in $values {
           .#{$label}\:#{"" + $key}\@#{$point} {
-            @media screen and (max-width: $pixels) {
+            @media screen and (min-width: $pixels) {
               #{$label}: $val;
             }
           }
 
           .#{$label}\:#{"" + $key}\@#{$point}\! {
-            @media screen and (max-width: $pixels) {
+            @media screen and (min-width: $pixels) {
               #{$label}: $val !important;
             }
           }

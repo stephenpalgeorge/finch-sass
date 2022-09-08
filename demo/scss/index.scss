@@ -1,5 +1,9 @@
-@use '../../src/color';
+@use '../../src/color' with (
+  $colors: (red: #f00),
+  $utils: (color: true, background-color: true),
+  $responsive-utils: (color: true),
+);
 
-h1 {
-  color: color.use(red, 800);
-}
+//h1 {
+//  color: color.use(red, 800);
+//}

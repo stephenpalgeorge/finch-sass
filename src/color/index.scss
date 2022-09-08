@@ -56,6 +56,12 @@ $-shades-map: ();
   $-shades-map: map.set($-shades-map, $name, create-shades($clr));
 }
 
+/// /*  --------------------------------  *\
+///  *  COLOR FUNCTIONS
+/// \*  --------------------------------  */
+
+/// USE
+/// ----------------
 /// The 'use' function provides a shorthand for accessing a value in the `$palette` map
 /// that the color module defines. It also accepts an optional `$shade` parameter, that will
 /// adjust the color to be lighter (1000) or darker (0).
@@ -76,7 +82,7 @@ $-shades-map: ();
 }
 
 /// COMPLEMENTARY
-/// ----------
+/// ----------------
 /// Returns a color or map of shades for the color that is the complement of the specified color.
 /// @param $color {Color} the base color that will be used to calculate the complement and its shades.
 /// @param $shades {Boolean} determines if the entire 'shades' map should be returned, or just one specific colour value.
@@ -104,7 +110,7 @@ $-shades-map: ();
 }
 
 /// ANALOGOUS
-/// ----------
+/// ----------------
 /// Returns a color, or map of shades based on the 2 'analogous' colors of the specified color.
 /// @param $color {Color} the base color that will be used to calculate the analogous palette and their shades.
 /// @param $shades {Boolean} determines whether or not the shades maps should be created.
@@ -138,7 +144,7 @@ $-shades-map: ();
 }
 
 /// TRIADIC
-/// ----------
+/// ----------------
 /// Returns a color, or map of shades based on the 2 other 'triadic' colors that extrapolate from the 'base'.
 /// @param $color {Color} the base color that will be used to calculate the triadic palette and their shades.
 /// @param $shades {Boolean} determines if the entire 'shades' map should be returned for each color, or just the color values.
@@ -165,7 +171,7 @@ $-shades-map: ();
 }
 
 /// TETRADIC
-/// ----------
+/// ----------------
 /// Returns a color, or may of shades based on the 3 other 'tetradic' colors that extrapolate from the 'base'.
 /// @param $color {Color} the base color that will be used to calculate the triadic palette and their shades.
 /// @param $key {String} one of 'secondary', 'tertiary' or 'quaternary' - representing which of the 3 colors should be referenced.
@@ -197,10 +203,12 @@ $-shades-map: ();
   @return null;
 }
 
-/// UTILITIES
-/// ----------
+/// /*  --------------------------------  *\
+///  *  UTILITIES
+/// \*  --------------------------------  */
+
 @each $prop, $flag in $utilities {
-  @if $flag {
+  @if $flag or map.get($responsive, $prop) {
     @include m.gen-utils($prop, $-palette, $responsive: map.get($responsive, $prop));
   }
 }
