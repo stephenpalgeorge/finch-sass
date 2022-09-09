@@ -1,3 +1,7 @@
+@use '../../src/global/config' with (
+  $breakpoints: (sm: 500px)
+);
+
 @use '../../src/color' with (
   $colors: (red: #f00),
   $utils: (color: true, background-color: true),

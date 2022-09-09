@@ -86,133 +86,133 @@
   color: hsl(0deg, 0%, 13%) !important;
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:red\@sm {
     color: #f00;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:red\@sm\! {
     color: #f00 !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:blue\@sm {
     color: hsl(202deg, 82%, 58%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:blue\@sm\! {
     color: hsl(202deg, 82%, 58%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:green\@sm {
     color: hsl(88deg, 48%, 25%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:green\@sm\! {
     color: hsl(88deg, 48%, 25%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:yellow\@sm {
     color: hsl(45deg, 93%, 56%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:yellow\@sm\! {
     color: hsl(45deg, 93%, 56%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:pink\@sm {
     color: hsl(328deg, 64%, 66%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:pink\@sm\! {
     color: hsl(328deg, 64%, 66%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:purple\@sm {
     color: hsl(279deg, 82%, 41%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:purple\@sm\! {
     color: hsl(279deg, 82%, 41%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:orange\@sm {
     color: hsl(22deg, 100%, 53%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:orange\@sm\! {
     color: hsl(22deg, 100%, 53%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:indigo\@sm {
     color: hsl(231deg, 57%, 70%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:indigo\@sm\! {
     color: hsl(231deg, 57%, 70%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:violet\@sm {
     color: hsl(270deg, 100%, 46%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:violet\@sm\! {
     color: hsl(270deg, 100%, 46%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:light\@sm {
     color: hsl(285deg, 50%, 98%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:light\@sm\! {
     color: hsl(285deg, 50%, 98%) !important;
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:dark\@sm {
     color: hsl(0deg, 0%, 13%);
   }
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 500) {
   .color\:dark\@sm\! {
     color: hsl(0deg, 0%, 13%) !important;
   }
