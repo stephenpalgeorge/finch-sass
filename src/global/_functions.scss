@@ -1,0 +1,26 @@
+@use 'sass:math';
+
+/// CREATE SCALE
+/// ----------
+/// Generate a map that represents a modular scale.
+///
+/// @param {Length} $base the initial size for "normal" text/padding etc.
+/// @param {Number} $ratio the amount by which each succesive step in the scale should be multiplied.
+/// @return {Map} function returns a map that contains 10 size values derived from the params.
+///
+@function create-scale($base: 1rem, $ratio) {
+  $scale: (
+    100: math.div($base, math.pow($ratio, 3)),
+    200: math.div($base, math.pow($ratio, 2)),
+    300: math.div($base, math.pow($ratio, 1)),
+    400: $base,
+    500: $base * math.pow($ratio, 1),
+    600: $base * math.pow($ratio, 2),
+    700: $base * math.pow($ratio, 3),
+    800: $base * math.pow($ratio, 4),
+    900: $base * math.pow($ratio, 5),
+    1000: $base * math.pow($ratio, 6),
+  );
+
+  @return $scale;
+}

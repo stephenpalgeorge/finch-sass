@@ -1,10 +1,12 @@
+@use 'sass:map';
 @use 'sass:meta';
 @use './config';
 
 /// GENERATE UTILITY CLASSES
 /// ----------
 ///
-@mixin gen-utils($label, $values, $responsive: false) {
+@mixin gen-utils($prop, $values, $responsive: false) {
+  $label: map.get(config.$property-labels, $prop);
   @if meta.type-of($values) == list {
     /// $values could be a list, e.g. `gen-utils('text-align', (left, center, right))`.
     /// create classes like `.text-align:center` and `.text-align:center!`.

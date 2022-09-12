@@ -1,3 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=PT+Mono&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
 .color\:red {
   color: #f00;
 }
@@ -86,133 +91,133 @@
   color: hsl(0deg, 0%, 13%) !important;
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:red\@sm {
     color: #f00;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:red\@sm\! {
     color: #f00 !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:blue\@sm {
     color: hsl(202deg, 82%, 58%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:blue\@sm\! {
     color: hsl(202deg, 82%, 58%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:green\@sm {
     color: hsl(88deg, 48%, 25%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:green\@sm\! {
     color: hsl(88deg, 48%, 25%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:yellow\@sm {
     color: hsl(45deg, 93%, 56%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:yellow\@sm\! {
     color: hsl(45deg, 93%, 56%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:pink\@sm {
     color: hsl(328deg, 64%, 66%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:pink\@sm\! {
     color: hsl(328deg, 64%, 66%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:purple\@sm {
     color: hsl(279deg, 82%, 41%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:purple\@sm\! {
     color: hsl(279deg, 82%, 41%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:orange\@sm {
     color: hsl(22deg, 100%, 53%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:orange\@sm\! {
     color: hsl(22deg, 100%, 53%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:indigo\@sm {
     color: hsl(231deg, 57%, 70%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:indigo\@sm\! {
     color: hsl(231deg, 57%, 70%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:violet\@sm {
     color: hsl(270deg, 100%, 46%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:violet\@sm\! {
     color: hsl(270deg, 100%, 46%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:light\@sm {
     color: hsl(285deg, 50%, 98%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:light\@sm\! {
     color: hsl(285deg, 50%, 98%) !important;
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:dark\@sm {
     color: hsl(0deg, 0%, 13%);
   }
 }
 
-@media screen and (min-width: 500) {
+@media screen and (min-width: 500px) {
   .color\:dark\@sm\! {
     color: hsl(0deg, 0%, 13%) !important;
   }
@@ -614,92 +619,102 @@
   }
 }
 
-.background-color\:red {
-  background-color: #f00;
+.bg\:red {
+  bg: #f00;
 }
 
-.background-color\:red\! {
-  background-color: #f00 !important;
+.bg\:red\! {
+  bg: #f00 !important;
 }
 
-.background-color\:blue {
-  background-color: hsl(202deg, 82%, 58%);
+.bg\:blue {
+  bg: hsl(202deg, 82%, 58%);
 }
 
-.background-color\:blue\! {
-  background-color: hsl(202deg, 82%, 58%) !important;
+.bg\:blue\! {
+  bg: hsl(202deg, 82%, 58%) !important;
 }
 
-.background-color\:green {
-  background-color: hsl(88deg, 48%, 25%);
+.bg\:green {
+  bg: hsl(88deg, 48%, 25%);
 }
 
-.background-color\:green\! {
-  background-color: hsl(88deg, 48%, 25%) !important;
+.bg\:green\! {
+  bg: hsl(88deg, 48%, 25%) !important;
 }
 
-.background-color\:yellow {
-  background-color: hsl(45deg, 93%, 56%);
+.bg\:yellow {
+  bg: hsl(45deg, 93%, 56%);
 }
 
-.background-color\:yellow\! {
-  background-color: hsl(45deg, 93%, 56%) !important;
+.bg\:yellow\! {
+  bg: hsl(45deg, 93%, 56%) !important;
 }
 
-.background-color\:pink {
-  background-color: hsl(328deg, 64%, 66%);
+.bg\:pink {
+  bg: hsl(328deg, 64%, 66%);
 }
 
-.background-color\:pink\! {
-  background-color: hsl(328deg, 64%, 66%) !important;
+.bg\:pink\! {
+  bg: hsl(328deg, 64%, 66%) !important;
 }
 
-.background-color\:purple {
-  background-color: hsl(279deg, 82%, 41%);
+.bg\:purple {
+  bg: hsl(279deg, 82%, 41%);
 }
 
-.background-color\:purple\! {
-  background-color: hsl(279deg, 82%, 41%) !important;
+.bg\:purple\! {
+  bg: hsl(279deg, 82%, 41%) !important;
 }
 
-.background-color\:orange {
-  background-color: hsl(22deg, 100%, 53%);
+.bg\:orange {
+  bg: hsl(22deg, 100%, 53%);
 }
 
-.background-color\:orange\! {
-  background-color: hsl(22deg, 100%, 53%) !important;
+.bg\:orange\! {
+  bg: hsl(22deg, 100%, 53%) !important;
 }
 
-.background-color\:indigo {
-  background-color: hsl(231deg, 57%, 70%);
+.bg\:indigo {
+  bg: hsl(231deg, 57%, 70%);
 }
 
-.background-color\:indigo\! {
-  background-color: hsl(231deg, 57%, 70%) !important;
+.bg\:indigo\! {
+  bg: hsl(231deg, 57%, 70%) !important;
 }
 
-.background-color\:violet {
-  background-color: hsl(270deg, 100%, 46%);
+.bg\:violet {
+  bg: hsl(270deg, 100%, 46%);
 }
 
-.background-color\:violet\! {
-  background-color: hsl(270deg, 100%, 46%) !important;
+.bg\:violet\! {
+  bg: hsl(270deg, 100%, 46%) !important;
 }
 
-.background-color\:light {
-  background-color: hsl(285deg, 50%, 98%);
+.bg\:light {
+  bg: hsl(285deg, 50%, 98%);
 }
 
-.background-color\:light\! {
-  background-color: hsl(285deg, 50%, 98%) !important;
+.bg\:light\! {
+  bg: hsl(285deg, 50%, 98%) !important;
 }
 
-.background-color\:dark {
-  background-color: hsl(0deg, 0%, 13%);
+.bg\:dark {
+  bg: hsl(0deg, 0%, 13%);
 }
 
-.background-color\:dark\! {
-  background-color: hsl(0deg, 0%, 13%) !important;
+.bg\:dark\! {
+  bg: hsl(0deg, 0%, 13%) !important;
+}
+
+h1 {
+  color: #ff4d4d;
+  font: normal normal 900 2.44140625rem / 3.0517578125rem "Source Serif Pro", Georgia, serif;
+}
+
+p {
+  font: normal normal normal 1rem / 1.953125rem "Open Sans", Helvetica, Arial, sans-serif;
+  line-height: 2;
 }
 
 /*# sourceMappingURL=index.css.map */

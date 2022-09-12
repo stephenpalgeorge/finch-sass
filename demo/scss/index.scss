@@ -8,6 +8,12 @@
   $responsive-utils: (color: true),
 );
 
-//h1 {
-//  color: color.use(red, 800);
-//}
+@use '../../src/typography' as typ;
+
+h1 {
+  color: color.use(red, 800);
+}
+
+p {
+  @include typ.use(body, (line-height: 2));
+}

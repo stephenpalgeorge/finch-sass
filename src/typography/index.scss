@@ -1,0 +1,103 @@
+@use 'sass:map';
+@use '../global/config';
+@use '../global/mixins' as m;
+@use './variables' as *;
+
+@forward './functions';
+@forward './variables';
+
+$-finch-utilities: (
+  font-size: false,
+  font-weight: false,
+  font-family: false,
+  line-height: false,
+  letter-spacing: false,
+);
+$utils: () !default;
+$utilities: map.merge($-finch-utilities, $utils);
+
+$-finch-responsive: (
+  font-size: false,
+  font-weight: false,
+  font-family: false,
+  line-height: false,
+  letter-spacing: false,
+);
+$responsive-utils: () !default;
+$responsive: map.merge($-finch-responsive, $responsive-utils);
+
+
+$-finch-font-families: (
+  sans-serif: $family\sans-serif,
+  serif: $family\serif,
+  cursive: $family\cursive,
+  monospace: $family\monospace,
+);
+$font-families: () !default;
+$-families: map.merge($-finch-font-families, $font-families);
+
+$-finch-fonts: (
+  body: $font\body,
+  titles: $font\titles,
+);
+$fonts: () !default;
+$-font-declarations: map.merge($-finch-fonts, $fonts);
+
+/// USE FUNCTION
+/// ----------
+/// The use function is for setting a font from the branded 'font-declarations' map
+/// @param $font-name {String} the name of one of the brand fonts, e.g. 'body'
+/// @return {String|null} the value of the font (normal normal normal 16px/24px 'Open Sans')
+/// @example
+/// h1 {
+///   font: typ.use(titles);
+/// }
+@function use($font-name) {
+  $font: map.get($-font-declarations, $font-name);
+  @if $font {
+    @return $font;
+  }
+
+  @warn 'Could not find font for "#{$font-name}"';
+  @return null;
+}
+
+/// USE MIXIN
+/// ----------
+/// The use mixin is a wrapper for the use function that allows for adjustments to be
+/// passed in that alter the font's properties. i.e. you might want to use 'body' font with
+/// a different line-height to the default value.
+/// @param $font-name {String} the name of the brand font that is to be used
+/// @param $options {String} a map of property - value pairs that will override the default font values
+/// @example
+/// p {
+///   @include typ.use(body, (line-height: 1.8, font-style: italic));
+/// }
+@mixin use($font-name, $options: null) {
+  font: use($font-name);
+  @if $options {
+    @each $key, $value in $options {
+      #{$key}: $value;
+    }
+  }
+}
+
+/// /*  --------------------------------  *\
+///  *  UTILITY CLASSES
+/// \*  --------------------------------  */
+///
+/// The prop-values map provides a lookup for the values that should be used for each
+/// typography property when iterating to create utility classes.
+$-prop-values: (
+  font-size: config.$modular-scale,
+  font-weight: (normal, bold, bolder, lighter, 100, 200, 300, 400, 500, 600, 700, 800, 900),
+  font-family: $-families,
+  line-height: config.$modular-scale,
+  letter-spacing: config.$modular-scale\detail,
+);
+
+@each $prop, $flag in $utilities {
+  @if $flag or map.get($responsive, $prop) {
+    @include m.gen-utils($prop, map.get($-prop-values, $prop), $responsive: map.get($responsive, $prop));
+  }
+}
