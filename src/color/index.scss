@@ -1,7 +1,10 @@
+@forward './functions';
+
 // sass modules
 @use 'sass:color';
 @use 'sass:list';
 @use 'sass:map';
+@use 'sass:meta';
 // global imports
 @use '../global/config';
 @use '../global/mixins' as m;
@@ -10,19 +13,15 @@
 @use 'functions' as *;
 
 // module config
-$-finch-utilities: (
+$-utility-defaults: (
   color: false,
   background-color: false,
 );
-$utils: () !default;
-$utilities: map.merge($-finch-utilities, $utils);
 
-$-finch-responsive: (
-  color: false,
-  background-color: false,
-);
+$utils: () !default;
+$utilities: map.merge($-utility-defaults, $utils);
 $responsive-utils: () !default;
-$responsive: map.merge($-finch-responsive, $responsive-utils);
+$responsive: map.merge($-utility-defaults, $responsive-utils);
 
 // the default finch colours
 // @see './variables.scss' for colour and a11y information
@@ -65,7 +64,7 @@ $-shades-map: ();
 /// The 'use' function provides a shorthand for accessing a value in the `$palette` map
 /// that the color module defines. It also accepts an optional `$shade` parameter, that will
 /// adjust the color to be lighter (1000) or darker (0).
-/// @param $key one of the keys from the color-palette map.
+/// @param $key {String} one of the keys from the color-palette map.
 /// @param $shade {Number} a number from 0 - 1000, in increments of 100.
 ///
 @function use($key, $shade: null) {
@@ -79,6 +78,52 @@ $-shades-map: ();
 
   @warn 'No color found for key "#{$key} / #{$shade}"';
   @return null;
+}
+
+@mixin use($key, $shade: base, $target: color, $options: null) {
+  $color: use($key, $shade);
+  $transition: null;
+
+  $states: (hover, focus);
+  @if meta.type-of($target) == list {
+    @each $item in $target {
+      #{$item}: $color;
+      @if $transition != null {
+        $transition: #{$transition}, #{$item} .2s linear;
+      } @else {
+        $transition: #{$item} .2s linear;
+      }
+
+      @each $state in $states {
+        &:#{$state} {
+          @if $options and map.get($options, $state) {
+            #{$item}: map.get($options, $state);
+          } @else if color.lightness($color) < 50% {
+            #{$item}: lighten($color, 10%);
+          } @else {
+            #{$item}: darken($color, 10%);
+          }
+        }
+      }
+    }
+  } @else {
+    #{$target}: $color;
+    $transition: #{$target} .2s linear;
+
+    @each $state in $states {
+      &:#{$state} {
+        @if $options and map.get($options, $state) {
+          #{$target}: map.get($options, $state);
+        } @else if color.lightness($color) < 50% {
+          #{$target}: lighten($color, 10%);
+        } @else {
+          #{$target}: darken($color, 10%);
+        }
+      }
+    }
+  }
+
+  transition: #{$transition};
 }
 
 /// COMPLEMENTARY

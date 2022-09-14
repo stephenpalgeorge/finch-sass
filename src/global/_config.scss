@@ -2,7 +2,7 @@
 @use './variables' as *;
 
 // global values are values that can be set on *any* css property.
-$global-values: (initial, inherit, unset);
+$global-values: (initial, inherit, unset, revert, revert-layer);
 
 // BREAKPOINTS
 // ----------
@@ -61,6 +61,10 @@ $-prop-labels: (
   font-family: 'family',
   line-height: 'line-height',
   letter-spacing: 'letter-spacing',
+  text-indent: 'indent',
+  text-transform: 'text-transform',
+  word-spacing: 'word-spacing',
+  word-break: 'word-break',
 );
 $labels: () !default;
 $property-labels: map.merge($-prop-labels, $labels);

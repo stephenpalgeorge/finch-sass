@@ -1,19 +1,24 @@
-@use '../../src/global/config' with (
-  $breakpoints: (sm: 500px)
-);
-
-@use '../../src/color' with (
-  $colors: (red: #f00),
-  $utils: (color: true, background-color: true),
-  $responsive-utils: (color: true),
-);
-
+@use '../../src/color' as clr;
 @use '../../src/typography' as typ;
+@use '../../src/math/index' as mth;
+
+@debug clr.rgb-to-hex(rgb(135, 148, 222));
 
 h1 {
-  color: color.use(red, 800);
+  font: typ.use(titles);
+  color: clr.use(red, 800);
 }
 
 p {
-  @include typ.use(body, (line-height: 2));
+  font: typ.use(handwriting);
+}
+
+a {
+  font: typ.use(links);
+  color: clr.use(red);
+}
+
+button {
+  padding: 1rem;
+  @include clr.use(red, $target: background-color, $options: (hover: green));
 }

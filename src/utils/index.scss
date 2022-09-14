@@ -1,0 +1,24 @@
+@use 'sass:list';
+@use 'sass:math';
+
+@function list-reverse($list) {
+  $result: ();
+  @for $i from list.length($list) * -1 through -1 {
+    $result: list.append($result, list.nth($list, math.abs($i)), $separator: comma);
+  }
+
+  @return $result;
+}
+
+@function list-concat($list, $separator: null) {
+  $value: null;
+  @each $item in $list {
+    @if $separator {
+      $value: #{$value}#{$separator}#{$item};
+    } @else {
+      $value: #{$value}#{$item};
+    }
+  }
+
+  @return $value;
+}

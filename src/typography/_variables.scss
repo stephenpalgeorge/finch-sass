@@ -14,3 +14,9 @@ $family\monospace: 'PT Mono', monospace;
 
 $font\body: gen-font($family\sans-serif, 400, 700);
 $font\titles: gen-font($family\serif, 800, 900, $weight: 900);
+$font\lead: gen-font($family\sans-serif, 500, 700);
+$font\emphasis: gen-font($family\sans-serif, 400, 700, $style: italic);
+$font\bold: gen-font($family\sans-serif, 400, 700, $weight: 900);
+$font\links: gen-font($family\serif, 400, 700);
+$font\code: gen-font($family\monospace, 400, 600);
+$font\handwriting: gen-font($family\cursive, 600, 800);

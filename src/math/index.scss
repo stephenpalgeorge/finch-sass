@@ -1,0 +1,46 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:math';
+@use '../utils';
+
+/// TO RADIX
+/// ----------
+/// Converts a decimal (base 10) number to its equivalent in another base.
+/// @param $decimal {Number} the base 10 number that is to be converted
+/// @param $target {Number} the base into which the number is to be converted
+/// @return {String} an unquoted string representing the number in its new base.
+///
+/// @example to-radix(255, 16) // ff
+@function to-radix($decimal, $target) {
+  $representations: (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, b, c, d, e, f);
+
+  $quotient: $decimal;
+  $digits: ();
+  @while $quotient > 0 {
+    $parts: modulo($quotient, $target);
+    $quotient: map.get($parts, quotient);
+    $digits: list.append($digits, list.nth($representations, map.get($parts, remainder) + 1), $separator: comma);
+  }
+
+  @return utils.list-concat(utils.list-reverse($digits));
+}
+
+/// MODULO
+/// ----------
+/// An implementation of the 'modulo' operator.
+/// @param $numerator {Number} the number to be divided
+/// @param $denominator {Number} the number to divide by
+/// @return {Map} the quotient and the remainder from the division,
+/// or `null` if the $denominator doesn't go into the $numerator at
+/// least once
+///
+/// @example modulo(6, 4) // (quotient: 1, remainder: 2)
+@function modulo($numerator, $denominator) {
+  $division: math.div($numerator, $denominator);
+  $int: math.floor($division);
+  @if $int == 0 {
+    @return (quotient: $int, remainder: $numerator);
+  }
+
+  @return (quotient: $int, remainder: $numerator - ($denominator * $int));
+}

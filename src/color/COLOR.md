@@ -1,5 +1,7 @@
 # Finch Color Module
 
+[//]: # (@todo - write 'use' mixin documentation)
+
 The 'color' module in Finch provides a set of useful functions for working with color in Sass. It aids in creating, editing and using a palette of predefined brand colors.
 
 ## Module configuration
@@ -10,7 +12,7 @@ There are 3 different variables that the user can configure the module with. The
 2. **$utils:** The user can provide a map of key-value pairs in which the key is a property name and the value is a boolean. All properties are set as `false` by default. Any property that is declared as `true` in this map will have a set of utility classes generated for it.
 3. **$responsive-utils:** This works exactly like the `$utils` map, except that in this instance, any property that is declared `true` will have additional utility classes for each breakpoint added.
 
-## Module functions
+## Module functions && mixins
 
 The color module exposes a number of functions that can be used to work with color palettes in a Sass stylesheet. These are each detailed below:
 
@@ -38,6 +40,8 @@ a {
   color: clr.use(blue, 800);
 }
 ```
+
+The 'use' mixin is a wrapper for the use function that provides some additional behaviour. As well as setting the specified colour against the `$target` property, it also establishes some `hover` and `focus` styles - if the colour is considered 'dark', it is lightened by 10%, or conversely, if the colour is considered 'light', it is darkened by 10%.
 
 ### Complementary
 

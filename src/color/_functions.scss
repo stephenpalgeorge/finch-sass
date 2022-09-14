@@ -1,6 +1,9 @@
 @use 'sass:color';
 @use 'sass:map';
 @use 'sass:math';
+@use 'sass:string';
+
+@use '../math' as mth;
 
 /// CREATE SHADES
 /// ----------
@@ -27,4 +30,25 @@
   }
 
   @return $shades;
+}
+
+@function rgb-to-hex($val) {
+  $channels: (
+    red: color.red($val),
+    green: color.green($val),
+    blue: color.blue($val),
+  );
+
+  $output: ();
+  @each $channel, $value in $channels {
+    @if $value > 0 {
+      $hexValue: mth.to-radix($value, 16);
+      @if $value < 16 { $hexValue: "0#{$hexValue}"; }
+      $output: map.set($output, $channel, $hexValue);
+    } @else {
+      $output: map.set($output, $channel, '00');
+    }
+  }
+
+  @return #{'#'}#{map.get($output, red)}#{map.get($output, green)}#{map.get($output, blue)};
 }

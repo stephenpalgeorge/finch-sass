@@ -6,25 +6,22 @@
 @forward './functions';
 @forward './variables';
 
-$-finch-utilities: (
+$-utility-defaults: (
   font-size: false,
   font-weight: false,
   font-family: false,
   line-height: false,
   letter-spacing: false,
+  text-indent: false,
+  text-transform: false,
+  word-spacing: false,
+  word-break: false,
 );
-$utils: () !default;
-$utilities: map.merge($-finch-utilities, $utils);
 
-$-finch-responsive: (
-  font-size: false,
-  font-weight: false,
-  font-family: false,
-  line-height: false,
-  letter-spacing: false,
-);
+$utils: () !default;
+$utilities: map.merge($-utility-defaults, $utils);
 $responsive-utils: () !default;
-$responsive: map.merge($-finch-responsive, $responsive-utils);
+$responsive: map.merge($-utility-defaults, $responsive-utils);
 
 
 $-finch-font-families: (
@@ -39,6 +36,12 @@ $-families: map.merge($-finch-font-families, $font-families);
 $-finch-fonts: (
   body: $font\body,
   titles: $font\titles,
+  lead: $font\lead,
+  emphasis: $font\emphasis,
+  bold: $font\bold,
+  links: $font\links,
+  code: $font\code,
+  handwriting: $font\handwriting,
 );
 $fonts: () !default;
 $-font-declarations: map.merge($-finch-fonts, $fonts);
@@ -94,6 +97,10 @@ $-prop-values: (
   font-family: $-families,
   line-height: config.$modular-scale,
   letter-spacing: config.$modular-scale\detail,
+  text-indent: config.$modular-scale,
+  text-transform: (none, capitalize, uppercase, lowercase, full-width, full-size-kana),
+  word-spacing: config.$modular-scale,
+  word-break: (normal, break-all, keep-all),
 );
 
 @each $prop, $flag in $utilities {
