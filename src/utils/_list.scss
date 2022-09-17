@@ -1,0 +1,233 @@
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:math';
+
+/// LIST REVERSE
+/// ----------
+/// The `list-reverse` function takes a list and returns a new list that has the
+/// same items but in the reverse order (the first becomes last etc).
+/// @param $list {List} the list that is to be reversed.
+/// @return {List} a new list with the items in reverse order.
+///
+/// @example list-reverse((1, 2, 3)) // (3, 2, 1)
+@function list-reverse($list) {
+  $result: ();
+  @for $i from list.length($list) through 1 {
+    $result: list.append($result, list.nth($list, $i), $separator: comma);
+  }
+
+  @return $result;
+}
+
+@debug "@function list-reverse: #{list-reverse((1, 2, 3))}"; // expect (3, 2, 1)
+@debug "----------";
+
+/// LIST CONCAT
+/// ----------
+/// The `list-concat` function takes a list and joins all items together into a string
+/// representation, optionally separated by a designated 'separator'.
+/// @param $list {List} the list that is to be concatenated
+/// @param $separator {String} @default null. Any string interpolated between each list item.
+/// @return {String} the joined list items.
+///
+/// @example list-concat((1, 2, 3)) // 123
+/// @example list-concat((a, b, c), "-") // a-b-c
+@function list-concat($list, $separator: null) {
+  $value: null;
+  @each $item in $list {
+    @if $separator and list.index($list, $item) != 1 {
+      $value: #{$value}#{$separator}#{$item};
+    } @else {
+      $value: #{$value}#{$item};
+    }
+  }
+
+  @return $value;
+}
+
+@debug "@function list-concat: #{list-concat((1, 2, 3))}"; // expect 123
+@debug "@function list-concat: #{list-concat((a, b, c), '-')}"; // expect a-b-c
+@debug "----------";
+
+/// LIST LAST INDEX
+/// ----------
+///
+@function list-last-index($list, $item) {
+  @for $i from list.length($list) through 1 {
+    @if list.nth($list, $i) == $item {
+      @return $i;
+    }
+  }
+
+  @warn "Item not in list";
+  @return null;
+}
+
+@debug "@function list-last-index: #{list-last-index((1, 2, 3, 4), 3)}"; // expect 3
+@debug "@function list-last-index: #{list-last-index((1, 2, 3, 2, 5), 2)}"; // expect 4
+@debug "----------";
+
+/// LIST PREPEND
+/// ----------
+///
+@function list-prepend($list, $item) {
+  @return list.join($item, $list);
+}
+
+@debug "@function list-prepend: #{list-prepend((1, 2, 3), 0)}"; // expect (0, 1, 2, 3)
+@debug "@function list-prepend: #{list-prepend((1, 2, 3), (0, 5))}"; // expect (0, 5, 1, 2, 3)
+@debug "----------";
+
+/// LIST INSERT
+/// ----------
+///
+@function list-insert($list, $item, $index: null) {
+  @if $index == null {
+    $index: list.length($list) + 1;
+  }
+
+  $result: ();
+  @for $i from 1 through list.length($list) {
+    @if $i == $index {
+      $result: list.append($result, $item);
+    }
+
+    $result: list.append($result, list.nth($list, $i));
+  }
+
+  @return $result;
+}
+
+@debug "@function list-insert: #{list-insert((1, 2, 3), 4)}"; // expect (1, 2, 3, 4)
+@debug "@function list-insert: #{list-insert((1, 2, 3), 4, 2)}"; // expect (1, 4, 2, 3)
+@debug "@function list-insert: #{list-insert((1, 2, 3), (4, 5), 3)}"; // expect (1, 2, (4, 5), 3)
+@debug "----------";
+
+/// LIST REMOVE
+/// ----------
+///
+@function list-remove($list, $target, $recursive: false) {
+  $result: ();
+
+  @for $i from 1 through list.length($list) {
+    $current: list.nth($list, $i);
+    @if meta.type-of($current) == list and $recursive {
+      $result: list.append($result, list-remove($current, $target, $recursive));
+    } @else if $current != $target {
+      $result: list.append($result, $current);
+    }
+  }
+
+  @return $result;
+}
+
+@debug "@function list-remove: #{list-remove((1, 2, 3), 2)}"; // expect (1, 3)
+@debug "@function list-remove: #{list-remove((a, b, c, d, a, b), a)}"; // (b, c, d, b)
+@debug "@function list-remove: #{list-remove((a, b, c, (c, d), e), c)}"; // (a, b, (c, d), e)
+@debug "@function list-remove: #{list-remove((a, b, c, (c, d), e), c, true)}"; // (a, b, d, e)
+@debug "----------";
+
+/// LIST REMOVE NTH
+/// ----------
+///
+@function list-remove-nth($list, $index) {
+  $result: ();
+
+  @for $i from 1 through list.length($list) {
+    @if $i != $index {
+      $result: list.append($result, list.nth($list, $i));
+    }
+  }
+
+  @return $result;
+}
+
+@debug "@function list-remove-nth: #{list-remove-nth((a, b, c, d), 3)}"; // expect (a, b, d)
+@debug "----------";
+
+/// LIST REPLACE
+/// ----------
+///
+@function list-replace($list, $target, $item, $recursive: false) {
+  $result: ();
+
+  @for $i from 1 through list.length($list) {
+    $current: list.nth($list, $i);
+    @if meta.type-of($current) == list and $recursive {
+      $result: list.append($result, list-replace($current, $target, $item, $recursive));
+    } @else if $current == $target {
+      $result: list.append($result, $item);
+    } @else {
+      $result: list.append($result, $current);
+    }
+  }
+
+  @return $result;
+}
+
+@debug "@function list-replace: #{list-replace((1, 2, 3), 2, 5)}"; // expect (1, 5, 3)
+@debug "@function list-replace: #{list-replace((1, 2, 3, 2, 5), 2, 4)}"; // expect (1, 4, 3, 4, 5)
+@debug "@function list-replace: #{list-replace((1, 2, (2, 3), 4, 2), 2, 8)}"; // expect (1, 8, (2, 3), 4, 8)
+@debug "@function list-replace: #{list-replace((1, 2, (2, 3), 4, 2), 2, 8, true)}"; // expect(1, 8, (8, 3), 4, 8)
+@debug "----------";
+
+/// LIST REPLACE NTH
+/// ----------
+///
+@function list-replace-nth($list, $index, $item) {
+  $result: ();
+
+  @for $i from 1 through list.length($list) {
+    @if $i == $index {
+      $result: list.append($result, $item);
+    } @else {
+      $result: list.append($result, list.nth($list, $i));
+    }
+  }
+
+  @return $result;
+}
+
+@debug "@function list-replace-nth: #{list-replace-nth((a, b, c, d), 2, x)}"; // expect (a, x, c, d)
+@debug "----------";
+
+/// LIST SLICE
+/// ----------
+///
+@function list-slice($list, $start: 1, $end: list.length($list)) {
+  $result: ();
+  @for $i from $start through $end {
+    $result: list.append($result, list.nth($list, $i));
+  }
+
+  @return $result;
+}
+
+@debug "@function list-slice: #{list-slice((a, b, c, d, e), $end: 3)}"; // expect (a, b, c)
+@debug "@function list-slice: #{list-slice((a, b, c, d, e), 2, 4)}"; // expect (b, c, d)
+@debug "@function list-slice: #{list-slice((a, b, c, d, e), 4)}"; // expect (d, e)
+@debug "----------";
+
+/// LIST SHIFT
+/// ----------
+///
+@function list-shift($list, $interval: 1) {
+  $result: ();
+
+  @for $i from 0 to list.length($list) {
+    // brief explanation of the maths below.
+    // Turns out Sass modulo operator uses a 'floored' modulo when the dividend
+    // is negative. This means that, for example, -1 % 6 = 5 (because -1 = 6 * (-1) + 5).
+    // Calculating the index in this way means the 'wrapping' from end - start of the list
+    // (or vice versa) happens naturally.
+    $target: ($i - $interval) % list.length($list) + 1;
+    $result: list.append($result, list.nth($list, $target));
+  }
+
+  @return $result;
+}
+
+@debug "@function list-shift: #{list-shift((1, 2, 3, 4))}"; // expect (4, 1, 2, 3)
+@debug "@function list-shift: #{list-shift((1, 2, 3, 4), 3)}"; // expect (2, 3, 4, 1)
+@debug "@function list-shift: #{list-shift((a, b, c, d), -2)}"; // expect (c, d, a, b)
+@debug "----------";

@@ -32,23 +32,101 @@
   @return $shades;
 }
 
-@function rgb-to-hex($val) {
+@debug create-shades(#ff0000); // expect Map
+@debug "----------";
+
+/// TO HEX
+/// ----------
+/// This conversion function turns a color value of any color space into a hex value.
+/// @param $val {Color} a color value that is to be converted. This can be any color space, rgb,
+/// hsl etc. A hex value can be passed, but this would obviously be redundant.
+/// @return {Color} the color expressed in hexadecimal.
+///
+/// @example to-hex(rgb(255, 0, 0)) // #ff0000
+// @todo - implement $alpha channel support
+@function to-hex($val, $alpha: false) {
   $channels: (
     red: color.red($val),
     green: color.green($val),
     blue: color.blue($val),
   );
 
+  // for each channel (red, blue, green), we want to convert
+  // the decimal number to a hexadecimal and, when the hex number
+  // is only 1 digit, force it to be 2 by padding with an initial `0`.
   $output: ();
   @each $channel, $value in $channels {
     @if $value > 0 {
       $hexValue: mth.to-radix($value, 16);
       @if $value < 16 { $hexValue: "0#{$hexValue}"; }
+      // push each channel into the `$output` map, e.g. (red: 255, green: 0...)
       $output: map.set($output, $channel, $hexValue);
     } @else {
       $output: map.set($output, $channel, '00');
     }
   }
 
+  @if $alpha {
+    $opacity: 255 * color.alpha($val);
+    $opacityHex: mth.to-radix($opacity, 16);
+    @return #{'#'}#{map.get($output, red)}#{map.get($output, green)}#{map.get($output, blue)}#{$opacityHex};
+  }
+
   @return #{'#'}#{map.get($output, red)}#{map.get($output, green)}#{map.get($output, blue)};
 }
+
+@debug "@function to-hex: #{to-hex(rgb(177, 2, 28))}"; // expect #b2021c
+@debug "@function to-hex: #{to-hex(hsl(270, 50%, 80%))}"; // expect ccb3e6
+@debug "@function to-hex: #{to-hex(violet)}"; // expect ee82ee
+@debug "@function to-hex: #{to-hex(rgba(177, 2, 28, .5), $alpha: true)}"; // expect #b1021c80
+@debug "----------";
+
+/// TO RGB
+/// ----------
+/// This conversion function turns a color value of any color space into its `rgb` representation.
+/// @param $val {Color} a color value that is to be converted. This can be any color space, hex, hsl, etc.
+/// An rgb value can be passed, but this would obviously be redundant.
+/// @return {Color} an `rgb` representation of the color
+///
+/// @example to-rgb(#ff0000) // rgb(255, 0, 0)
+@function to-rgb($val, $alpha: false) {
+  $red: color.red($val);
+  $green: color.green($val);
+  $blue: color.blue($val);
+
+  @if $alpha {
+    // this is a bit ugly, but we want to guarantee that we have maximum 2 decimal places
+    // in the alpha value. `color.alpha` returns a number between 1 and 0, so we multiply by
+    // 100, round down, and then divide by 100. E.g. 0.510987 -> 51.0987 -> 51 -> 0.51.
+    $opacity: math.div(math.floor(color.alpha($val) * 100), 100);
+    @return rgba($red, $green, $blue, $opacity);
+  }
+
+  @return rgb($red, $green, $blue);
+}
+
+@debug "@function to-rgb: #{to-rgb(#B1021C)}"; // expect rgb(177, 2, 28)
+@debug "@function to-rgb: #{to-rgb(hsl(270, 50%, 80%))}"; // expect rgb(204, 179, 230)
+@debug "@function to-rgb: #{to-rgb(indigo)}"; // expect rgb(75, 0, 130)
+@debug "@function to-rgb: #{to-rgb(#b1021c80, $alpha: true)}"; // expect rgba(177, 2, 28, .5);
+@debug "----------";
+
+/// TO HSL
+/// ----------
+/// This conversion function turns a color value of any color space into its `hsl` representation.
+/// @param $val {Color} a color value that is to be converted. This can be any color space, hex, rgb etc.
+/// An hsl values can be passed, but this would obviously be redundant.
+/// @return {Color} an `hsl` representation of the color
+///
+/// @example to-hsl(#b1021c) // hsl(351, 98%, 35%)
+@function to-hsl($val) {
+  $hue: math.round(color.hue($val));
+  $saturation: math.round(color.saturation($val));
+  $lightness: math.round(color.lightness($val));
+
+  @return hsl($hue, $saturation, $lightness);
+}
+
+@debug "@function to-hsl: #{to-hsl(#B1021C)}"; // expect hsl(351, 98%, 35%)
+@debug "@function to-hsl: #{to-hsl(rgb(60, 171, 236))}"; // expect hsl(202, 82%, 58%)
+@debug "----------";

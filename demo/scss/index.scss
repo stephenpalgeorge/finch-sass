@@ -1,8 +1,7 @@
 @use '../../src/color' as clr;
 @use '../../src/typography' as typ;
 @use '../../src/math/index' as mth;
-
-@debug clr.rgb-to-hex(rgb(135, 148, 222));
+@use '../../src/utils';
 
 h1 {
   font: typ.use(titles);

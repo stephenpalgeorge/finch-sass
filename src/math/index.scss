@@ -14,7 +14,7 @@
 @function to-radix($decimal, $target) {
   $representations: (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, b, c, d, e, f);
 
-  $quotient: $decimal;
+  $quotient: math.round($decimal);
   $digits: ();
   @while $quotient > 0 {
     $parts: modulo($quotient, $target);
@@ -27,7 +27,7 @@
 
 /// MODULO
 /// ----------
-/// An implementation of the 'modulo' operator.
+/// An implementation of the 'modulo' operator that returns both the quotient and remainder.
 /// @param $numerator {Number} the number to be divided
 /// @param $denominator {Number} the number to divide by
 /// @return {Map} the quotient and the remainder from the division,
