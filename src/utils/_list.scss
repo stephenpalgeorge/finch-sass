@@ -1,6 +1,7 @@
 @use 'sass:list';
 @use 'sass:meta';
 @use 'sass:math';
+@use 'sass:string';
 
 /// LIST REVERSE
 /// ----------
@@ -230,4 +231,31 @@
 @debug "@function list-shift: #{list-shift((1, 2, 3, 4))}"; // expect (4, 1, 2, 3)
 @debug "@function list-shift: #{list-shift((1, 2, 3, 4), 3)}"; // expect (2, 3, 4, 1)
 @debug "@function list-shift: #{list-shift((a, b, c, d), -2)}"; // expect (c, d, a, b)
+@debug "----------";
+
+/// LIST HAS
+/// ----------
+/// @todo - implement 'fuzzy' search
+@function list-has($list, $query, $recursive: false) {
+  @for $i from 1 through list.length($list) {
+    $current: list.nth($list, $i);
+    @if meta.type-of($current) == list and $recursive {
+      @for $j from 1 through list.length($current) {
+        @if list.nth($current, $j) == $query {
+          @return ($i, $j);
+        }
+      }
+    } @else if $current == $query {
+      @return $i;
+    }
+  }
+
+  @return null;
+}
+
+@debug "@function list-has: #{list-has((1, 2, 3), 3)}"; // expect 3
+@debug "@function list-has: #{list-has((a, b, c, d), b)}"; // expect 2
+@debug "@function list-has: #{list-has((a, (b, c), d), c)}"; // expect null
+@debug "@function list-has: #{list-has((a, (b, c), d), c, $recursive: true)}"; // expect (2, 2)
+@debug "@funciton list-has: #{list-has((1, 2, 3), 4)}"; // expect null
 @debug "----------";
