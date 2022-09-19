@@ -1,0 +1,18 @@
+@use 'sass:string';
+
+@function match($haystack, $needle, $exact: false) {
+  // normalise the values
+  // to compare the values, we want to coerce them both to
+  // being strings, we also 'lower case' them so case insensitive
+  // matching works out of the box.
+  // @todo - consider making case sensitivity configurable with a function param
+  $haystack: string.to-lower-case(#{$haystack});
+  $needle: string.to-lower-case(#{$needle});
+
+  @if $exact {
+    @return $needle == $haystack;
+  }
+
+  $match: string.index($haystack, $needle);
+  @return $match and $match > 0;
+}

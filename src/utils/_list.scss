@@ -1,7 +1,7 @@
 @use 'sass:list';
 @use 'sass:meta';
 @use 'sass:math';
-@use 'sass:string';
+@use './string';
 
 /// LIST REVERSE
 /// ----------
@@ -236,16 +236,16 @@
 /// LIST HAS
 /// ----------
 /// @todo - implement 'fuzzy' search
-@function list-has($list, $query, $recursive: false) {
+@function list-has($list, $query, $recursive: false, $fuzzy: false) {
   @for $i from 1 through list.length($list) {
     $current: list.nth($list, $i);
     @if meta.type-of($current) == list and $recursive {
       @for $j from 1 through list.length($current) {
-        @if list.nth($current, $j) == $query {
+        @if string.match(list.nth($current, $j), $query, $exact: not $fuzzy) {
           @return ($i, $j);
         }
       }
-    } @else if $current == $query {
+    } @else if string.match($current, $query, $exact: not $fuzzy) {
       @return $i;
     }
   }
@@ -258,4 +258,8 @@
 @debug "@function list-has: #{list-has((a, (b, c), d), c)}"; // expect null
 @debug "@function list-has: #{list-has((a, (b, c), d), c, $recursive: true)}"; // expect (2, 2)
 @debug "@funciton list-has: #{list-has((1, 2, 3), 4)}"; // expect null
+@debug "@function list-has: #{list-has(("one", "two", "three"), "two")}"; // expect 2
+@debug "@function list-has: #{list-has(("london", "new york", "paris"), "york")}"; // expect null
+@debug "@function list-has: #{list-has(("london", "new york", "paris"), "york", $fuzzy: true)}"; // expect 2
+@debug "@function list-has: #{list-has(("london", ("new york", "washington dc"), "paris"), "york", $recursive: true, $fuzzy: true)}"; // expect (2, 1)
 @debug "----------";
