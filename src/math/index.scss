@@ -17,7 +17,7 @@
   $quotient: math.round($decimal);
   $digits: ();
   @while $quotient > 0 {
-    $parts: modulo($quotient, $target);
+    $parts: mod($quotient, $target);
     $quotient: map.get($parts, quotient);
     $digits: list.append($digits, list.nth($representations, map.get($parts, remainder) + 1), $separator: comma);
   }
@@ -25,7 +25,7 @@
   @return utils.list-concat(utils.list-reverse($digits));
 }
 
-/// MODULO
+/// MOD
 /// ----------
 /// An implementation of the 'modulo' operator that returns both the quotient and remainder.
 /// @param $numerator {Number} the number to be divided
@@ -35,7 +35,9 @@
 /// least once
 ///
 /// @example modulo(6, 4) // (quotient: 1, remainder: 2)
-@function modulo($numerator, $denominator) {
+/// N.B. Sass already supports the % operator, and that should always be preferred except
+/// in the specific case when both the quotient and remainder need to be accessed.
+@function mod($numerator, $denominator) {
   $division: math.div($numerator, $denominator);
   $int: math.floor($division);
   @if $int == 0 {

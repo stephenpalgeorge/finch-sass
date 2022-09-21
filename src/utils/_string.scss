@@ -1,13 +1,75 @@
 @use 'sass:string';
 
+/// SLUGIFY
+/// ----------
+/// The `slugify` function converts a given value into a machine-readable string,
+/// this is basically done by converting it to lowercase and replacing any
+/// spaces with a specified 'glue'.
+/// @param $value {String} the string that is to be slugified
+/// @param $glue {String} the string or character that should be used to replace spaces
+/// @param $encode {Boolean} whether or not "special characters" should be url encoded
+/// @return {String}
+///
+/// @example slugify("This is Finch") // "this-is-finch"
+@function slugify($value, $glue: '-') {
+  $value: string.to-lower-case($value);
+
+  $result: "";
+  @for $i from 1 through string.length($value) {
+    $char: string.slice($value, $i, $i);
+    @if $char == " " {
+      $char: $glue;
+    }
+
+    $result: #{$result}#{$char};
+  }
+
+  @return $result;
+}
+
+@debug "@function slugify: #{slugify('Hello Finch')}"; // expect "hello-finch"
+@debug "@function slugify: #{slugify('Hello Finch', '_')}"; // expect "hello_finch"
+@debug "----------";
+
+/// NORMALIZE
+/// ----------
+/// The `normalize` function converts a given value to a lowercase string,
+/// useful to ensure consistency for comparisons etc.
+/// @param $value {any} the value that is to be transformed
+/// @return {String}
+///
+/// @example normalize("Finch Sass") // "finch sass"
+@function normalize($value) {
+  // string interpolation (the #{} syntax) handles the type conversion.
+  @return string.to-lower-case(#{$value});
+}
+
+@debug "@function normalize: #{normalize(400)}"; // expect "400"
+@debug "@function normalize: #{normalize("Finch Sass")}"; // expect "finch sass"
+@debug "----------";
+
+/// MATCH
+/// ----------
+/// The `match` function checks for equality between two items. By default,
+/// partial, case-insensitive matches will be considered a 'hit', but the
+/// function can also run in 'exact' mode, whereby it will only return `true`
+/// when the match is exact.
+/// Note that type matching is *not* a part of this implementation, i.e. comparing
+/// the number 3 with the string "3" will return true, even when `$exact: true`.
+/// @param $haystack {any} the item that is to be compared to
+/// @param $needle {any} the item that is to be checked for
+/// @param $exact {Boolean} whether or not partial, case-insensitive matches should be counted
+/// @return {Boolean}
+///
+/// @example match("finch-sass", "sass") // true
 @function match($haystack, $needle, $exact: false) {
   // normalise the values
   // to compare the values, we want to coerce them both to
   // being strings, we also 'lower case' them so case insensitive
   // matching works out of the box.
   // @todo - consider making case sensitivity configurable with a function param
-  $haystack: string.to-lower-case(#{$haystack});
-  $needle: string.to-lower-case(#{$needle});
+  $haystack: normalize($haystack);
+  $needle: normalize($needle);
 
   @if $exact {
     @return $needle == $haystack;
@@ -16,3 +78,50 @@
   $match: string.index($haystack, $needle);
   @return $match and $match > 0;
 }
+
+@debug "@function match: #{match(a, a)}"; // expect true
+@debug "@function match: #{match(43, "43")}"; // expect true
+@debug "@function match: #{match(143, "4")}"; // expect true
+@debug "@function match: #{match(143, "4", $exact: true)}"; // expect false
+@debug "----------";
+
+/// REPLACE
+/// ----------
+/// The `replace` function creates a new string that is a copy of the original,
+/// but with all instances of a given character replaced.
+/// @param $string {String} the string that is to be acted on
+/// @param $target {String} the character that is to be replaced
+/// @param $value {String} the replacement character
+/// @return {String}
+///
+/// @example replace("finch-sass", "a", "c") // expect "finch-scss"
+@function replace($string, $target, $value, $global: true) {
+  // find index of $target in $string, this will give us the starting index
+  // the ending index will be starting index + length of string
+  $start: string.index($string, $target);
+  $end: $start + string.length($target);
+  @if not $start { @return null; }
+
+  // initialise an empty string
+  $result: "";
+  // $initial is the portion of the string before and upto the $target value
+  $initial: string.slice($string, 1, $start - 1);
+  // $terminal is the portion of the string after and from the $target value
+  $terminal: string.slice($string, $end);
+  // construct the new string and then check if the $target is still present,
+  // in which case, call `replace` recursively.
+  $result: #{$initial}#{$value}#{$terminal};
+  $start: string.index($result, $target);
+  @if string.index($result, $target) and $global {
+    $result: replace($result, $target, $value);
+  }
+
+  @return $result;
+}
+
+@debug "@function replace: #{replace("finch-sass", "a", "c")}"; // expect "finch-sass"
+@debug "@function replace: #{replace("finch-scss", "c", "a")}"; // expect "finah-sass"
+@debug "@function replace: #{replace("finch-sass", "sass", "styles")}"; // expect "finch-styles"
+@debug "@function replace: #{replace("finch-color-module", "color", "layout")}"; // expect "finch-typography-module"
+@debug "@function replace: #{replace("finah-sass", "a", "c", $global: false)}"; // expect "finch-sass"
+@debug "----------";

@@ -3,24 +3,51 @@
 @use 'sass:math';
 @use './string';
 
+/* -------------------------------- *\
+   FILE INDEX
+\* -------------------------------- */
+
+/*
+ *  1. list-reverse: return a new list with the contents of the original list in reverse order.
+ *  2. list-concat: return a string representation of a list (the list items all joined together).
+ *  3. list-last-index: return the index of the final time a given item appears in a list.
+ *  4. list-prepend: return a new list with the given item(s) added to the *start* of the original list.
+ *  5. list-insert: add an item at a specified index. This does not replace the current item and will therefore increase the list length by 1.
+ *  6. list-remove: removes a given item from a list - can also work recursively to remove the item from all nested lists.
+ *  7. list-remove-nth: removes the item at the specified index - this will have the side affect of decreasing the list length by 1.
+ *  8. list-replace: replace all instances of a target with a given item - can also work recursively to replace the item within all nested lists.
+ *  9. list-replace-nth: replace the item at a specified index.
+ * 10. list-slice: return a new list that is a subset of the old list, determined by a 'start' and 'end' index.
+ * 11. list-shift: move all items of a list by a specified interval, e.g. `$interval: 1` would move everything one place to the right, with the last item wrapping to the beginning.
+ * 12. list-has: checks if a list contains a given item. This can work recursively, to check all nested lists, and 'fuzzy' to check for inexact matches.
+ *
+ */
+
 /// LIST REVERSE
 /// ----------
 /// The `list-reverse` function takes a list and returns a new list that has the
 /// same items but in the reverse order (the first becomes last etc).
 /// @param $list {List} the list that is to be reversed.
+/// @param $recursive {Boolean} whether or not nested lists should also be reversed.
 /// @return {List} a new list with the items in reverse order.
 ///
 /// @example list-reverse((1, 2, 3)) // (3, 2, 1)
-@function list-reverse($list) {
+@function list-reverse($list, $recursive: false) {
   $result: ();
   @for $i from list.length($list) through 1 {
-    $result: list.append($result, list.nth($list, $i), $separator: comma);
+    $current: list.nth($list, $i);
+    @if meta.type-of($current) == list and $recursive {
+      $current: list-reverse($current, $recursive);
+    }
+    $result: list.append($result, $current, $separator: comma);
   }
 
   @return $result;
 }
 
 @debug "@function list-reverse: #{list-reverse((1, 2, 3))}"; // expect (3, 2, 1)
+@debug "@function list-reverse: #{list-reverse((1, (1, 2), 3))}"; // expect (3, (1, 2), 1)
+@debug "@function list-reverse: #{list-reverse((1, (1, 2), 3), true)}"; // expect (3, (2, 1), 1)
 @debug "----------";
 
 /// LIST CONCAT
@@ -52,7 +79,13 @@
 
 /// LIST LAST INDEX
 /// ----------
+/// The `list-last-index` function returns the index of the final occurrence
+/// of the given item, or `null` if the item isn't found at all.
+/// @param $list {List} the list that is to be searched
+/// @param $item {any} the item that is to be searched for
+/// @return {Number|null}
 ///
+/// @example list-list-index((1, 2, 3, 2, 5), 2) // 4
 @function list-last-index($list, $item) {
   @for $i from list.length($list) through 1 {
     @if list.nth($list, $i) == $item {
@@ -70,7 +103,13 @@
 
 /// LIST PREPEND
 /// ----------
+/// The `list-prepend` function creates a new list with the given item added to the *start*
+/// of the given list.
+/// @param $list {List} the list that is to be prepended to
+/// @param $item {any} the item that is to be added to the start of the list
+/// @return {List}
 ///
+/// @example list-prepend((1, 2), 3) // (3, 1, 2)
 @function list-prepend($list, $item) {
   @return list.join($item, $list);
 }
@@ -81,7 +120,16 @@
 
 /// LIST INSERT
 /// ----------
+/// The `list-insert` function adds an item to a list at a specified index. If no
+/// index is given, the item is simply added to the end of the list. Note that the
+/// existing item at the specified index is *not* replaced, but rather moved, and the
+/// list length will therefore increase by 1 when using this function.
+/// @param $list {List} the list into which the item should be inserted
+/// @param $item {any} the item that is to be inserted into the list
+/// @param $index {Number} the position at which the item should be added
+/// @return {List}
 ///
+/// @example list-insert((1, 2, 3), 4, 2) // (1, 4, 2, 3)
 @function list-insert($list, $item, $index: null) {
   @if $index == null {
     $index: list.length($list) + 1;
@@ -106,7 +154,15 @@
 
 /// LIST REMOVE
 /// ----------
+/// The `list-remove` function creates a new list that does *not* contain a specified
+/// item. Note that *all instances* of the item will be removed. The function can also
+/// work recursively, to the remove the item from all nested lists.
+/// @param $list {List} the list from which the item should be removed
+/// @param $target {any} the item that is to be removed from the list
+/// @param $recursive {Boolean} whether or not the target should be removed from any nested lists
+/// @return {List}
 ///
+/// @example list-remove((1, 2, 3), 2) // (1, 3)
 @function list-remove($list, $target, $recursive: false) {
   $result: ();
 
@@ -123,14 +179,20 @@
 }
 
 @debug "@function list-remove: #{list-remove((1, 2, 3), 2)}"; // expect (1, 3)
-@debug "@function list-remove: #{list-remove((a, b, c, d, a, b), a)}"; // (b, c, d, b)
-@debug "@function list-remove: #{list-remove((a, b, c, (c, d), e), c)}"; // (a, b, (c, d), e)
-@debug "@function list-remove: #{list-remove((a, b, c, (c, d), e), c, true)}"; // (a, b, d, e)
+@debug "@function list-remove: #{list-remove((a, b, c, d, a, b), a)}"; // expect (b, c, d, b)
+@debug "@function list-remove: #{list-remove((a, b, c, (c, d), e), c)}"; // expect (a, b, (c, d), e)
+@debug "@function list-remove: #{list-remove((a, b, c, (c, d), e), c, true)}"; // expect (a, b, d, e)
 @debug "----------";
 
 /// LIST REMOVE NTH
 /// ----------
+/// The `list-remove-nth` function removes the item at a given index.
+/// Note, this will have the side affect of decreasing the list length by 1.
+/// @param $list {List} the list from which the item should be removed
+/// @param $index {Number} the position from which the item should be removed
+/// @return {List}
 ///
+/// @example list-remove-nth((a, b, c, d), 3) // (a, b, d)
 @function list-remove-nth($list, $index) {
   $result: ();
 
@@ -148,7 +210,15 @@
 
 /// LIST REPLACE
 /// ----------
+/// The `list-replace` function replaces a specified item with a given replacement.
+/// Note that all instances of the item will be replaced, and that the function can
+/// also work recursively, to replace the item in all nested lists.
+/// @param $list {List} the list in which the item should be replaced
+/// @param $target {any} the item that should be replaced
+/// @param $item {any} the item that should be used as the replacement value
+/// @param $recursive {Boolean} whether or not the target should be replaced in any nested lists
 ///
+/// @example list-replace((a, b, c), b, x) // (a, x, c)
 @function list-replace($list, $target, $item, $recursive: false) {
   $result: ();
 
@@ -174,7 +244,13 @@
 
 /// LIST REPLACE NTH
 /// ----------
+/// The `list-replace-nth` function replaces a list item at a specified index.
+/// @param $list {List} the list in which the item should be replaced
+/// @param $index {Number} the position in the list of the target item, which will be replaced
+/// @param $item {any} the item that will be used as the replacement value
+/// @return {List}
 ///
+/// @example list-replace-nth((a, b, c, d), 3, x) // (a, b, x, d)
 @function list-replace-nth($list, $index, $item) {
   $result: ();
 
@@ -194,7 +270,14 @@
 
 /// LIST SLICE
 /// ----------
+/// The `list-slice` function creates a new list that is a subset of the given list,
+/// defined by a start and end index.
+/// @param $list {List} the list from which the new list is to be created
+/// @param $start {Number} the index at which the slice should begin - defaults to `1` (the beginning of the list)
+/// @param $end {Number} the index at which the slice should stop - defaults to the end of the list
+/// @return {List}
 ///
+/// @example list-slice((a, b, c, d, e), 2, 4) // (b, c, d)
 @function list-slice($list, $start: 1, $end: list.length($list)) {
   $result: ();
   @for $i from $start through $end {
@@ -211,7 +294,14 @@
 
 /// LIST SHIFT
 /// ----------
+/// The `list-shift` function moves the items in a list by a given interval. The list items will
+/// 'wrap' accordingly, so the last item will be pushed to the beginning, or the first item will
+/// be pushed to the end as required.
+/// @param $list {List} the list that is to be operated on
+/// @param $interval {Number} the number of spaces by which the list should be shifted
+/// @return {List}
 ///
+/// @example list-shift((a, b, c, d), 2) // (c, d, a, b)
 @function list-shift($list, $interval: 1) {
   $result: ();
 
@@ -235,7 +325,20 @@
 
 /// LIST HAS
 /// ----------
-/// @todo - implement 'fuzzy' search
+/// The `list-has` function determines whether or not a list contains a given item.
+/// Note that, by default, the function will look for an exact match, but can work in
+/// `fuzzy` mode, where partial, case-insensitive matches will be counted, and can also
+/// work recursively, so all nested lists will also be checked.
+/// @param $list {List} the list that is to be searched
+/// @param $query {any} the item that is to be searched for
+/// @param $recursive {Boolean} whether or not nested lists should be searched
+/// @param $fuzzy {Boolean} whether or not partial, case-insensitive matches should be counted
+/// @return {Number|List|null} if the item is found, we return its index, however, if it is found
+/// in a nested list, we return a list of indices, representing the positions of the containing lists.
+/// For example, if an item was found at position 3 in a list that was itself in position 2 of the
+/// target list, we would return (2, 3). If the item is *not* found, return null.
+///
+/// @example list-has((a, b, c), b) // 2
 @function list-has($list, $query, $recursive: false, $fuzzy: false) {
   @for $i from 1 through list.length($list) {
     $current: list.nth($list, $i);

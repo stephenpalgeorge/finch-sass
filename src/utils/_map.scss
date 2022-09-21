@@ -1,14 +1,142 @@
+@use 'sass:list';
 @use 'sass:map';
+@use 'sass:meta';
+@use 'sass:string';
 
-/// MAP GET NEXT
-@function map-get-next($map, $current) {
+/// MAP GET NTH
+/// ----------
+/// The `map-get-nth` function returns the value of a map item located at a
+/// given index. This differs to Sass's built-in `map.get` function, which
+/// allows you to access a map value by its key.
+/// @param $map {Map} the map that is to be searched
+/// @param $index {Number} the position in the map from which the value should be returned
+/// @return {any|null} the value of the map item, or `null` if the index is out of bounds
+///
+/// @example map-get-nth((a: first, b: second, c: third), 2) // second
+@function map-get-nth($map, $index) {
+  $keys: map.keys($map);
+  $target: list.nth($keys, $index);
+  @if not $target {
+    @warn 'No map item found at index "#{$index}"';
+    @return null;
+  }
 
+  @return map.get($map, $target);
 }
 
+@debug "@function map-get-nth: #{map-get-nth((a: first, b: second), 2)}"; // expect 'second'
+@debug "----------";
+
+/// MAP INDEX
+/// ----------
+/// The `map-index` function returns the index of a given item in a map. The
+/// target item can be identified either by key, or value.
+/// @param $map {Map} the map that is to be searched
+/// @param $item {any} the search term - either a key or value in the map
+/// @param $search {key|value} whether the map's keys or values should be searched
+/// @return {Number|null} the index of the target item, or null if the search term isn't found
+///
+/// @example map-index((a: first, b: second, c: third), c) // 3
+@function map-index($map, $item, $search: key) {
+  $items: ();
+  @if $search == key {
+    $items: map.keys($map);
+  } @else if $search == value {
+    $items: map.values($map);
+  } @else {
+    @warn '#search must be "key" or "value"';
+    @return null;
+  }
+
+  $index: list.index($items, $item);
+  @if not $index {
+    @warn 'Map does not have any item for #{$search}: "#{$item}"';
+    @return null;
+  }
+  @return $index;
+}
+
+@debug "@function map-index: #{map-index((a: first, b: second, c: third), b)}"; // expect 2
+@debug "@function map-index: #{map-index((a: first, b: second, c: third), third, $search: value)}"; // expect 3
+@debug "----------";
+
+/// MAP GET NEXT
+/// ----------
+/// The `map-get-next` function returns the value of the next item in a map, relative
+/// to a specified start, which can be found either by key or value.
+/// @param $map {Map} the map that is to be searched
+/// @param $current {any} the starting point, either a map key or value
+/// @param $search {key|value} how the search should be performed
+/// @return {any}
+///
+/// @example map-get-next((a: 1, b: 2, c: 3, d: 4), b); // expect 3
+@function map-get-next($map, $current, $search: key) {
+  // get index of the current item
+  $index: map-index($map, $current, $search);
+  $target: $index + 1;
+  // handle wrapping
+  @if $index == list.length(map.keys($map)) {
+    $target: 1;
+  }
+  // return the value of the next item
+  @return map-get-nth($map, $target);
+}
+
+@debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), b)}"; // expect 'third'
+@debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), first, $search: value)}"; // expect 'second'
+@debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), c)}"; // expect 'first'
+@debug "----------";
+
 /// MAP GET PREV
+@function map-get-prev($map, $current, $search: key) {
+  // get index of the current item
+  $index: map-index($map, $current, $search);
+  $target: $index - 1;
+  // handle wrapping
+  @if $index == 1 {
+    $target: list.length(map.keys($map));
+  }
+  // return the value of the previous item
+  @return map-get-nth($map, $target);
+}
 
-
-/// MAP REVERSE
-
+@debug "@function map-get-prev: #{map-get-prev((a: first, b: second), b)}"; // expect 'first'
+@debug "@function map-get-prev: #{map-get-prev((a: first, b: second), second, $search: value)}"; // expect 'first'
+@debug "@function map-get-prev: #{map-get-prev((a: first, b: second), a)}"; // expect 'second'
+@debug "----------";
 
 /// MAP CONCAT
+/// ----------
+/// The `map-concat` function returns a string representation of a map.
+/// This can optionally include the keys, which will be joined to their value
+/// by a specified 'glue'.
+/// @param $map {Map} the map that is to be concatenated
+/// @param $keys {Boolean} whether or not the map keys should be included in the string output
+/// @param $glue {String|null} an optional string or character that will be used to join a map key
+/// with its value in the output string
+/// @return {String}
+///
+/// @example map-concat((a: first, b: second), $glue: "-") // first-second
+@function map-concat($map, $keys: false, $separator: null, $glue: " ") {
+  $result: "";
+  @each $key, $value in $map {
+    $current: #{$value};
+    @if $keys {
+      $current: #{$key}#{$glue}#{$value};
+    }
+
+    @if $separator and string.length($result) > 0 {
+      $result: #{$result}#{$separator}#{$current};
+    } @else {
+      $result: #{$result}#{$current};
+    }
+  }
+
+  @return $result;
+}
+
+@debug "@function map-concat: #{map-concat((a: first, b: second))}"; // expect firstsecond
+@debug "@function map-concat: #{map-concat((a: first, b: second), $separator: '-')}"; // expect first-second
+@debug "@function map-concat: #{map-concat((a: first, b: second), $keys: true, $separator: ', ', $glue: '-')}"; // expect a-first, b-second
+@debug "@function map-concat: #{map-concat((transform: .2s linear, color: .25s ease-out), $keys: true, $separator: ', ', $glue: ' ')}"; // expect 'transform .2s linear, color .25s ease-out'
+@debug "----------";
