@@ -1,10 +1,10 @@
 @use 'sass:map';
 @use '../global/config';
 @use '../global/mixins' as m;
-@use './variables' as *;
+@use 'variables' as *;
 
-@forward './functions';
-@forward './variables';
+@forward 'functions';
+@forward 'variables';
 
 $-utility-defaults: (
   font-size: false,

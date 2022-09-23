@@ -3,7 +3,7 @@
 @use 'sass:math';
 @use 'sass:string';
 
-@use '../math' as mth;
+@use '../math/index' as mth;
 
 /// CREATE SHADES
 /// ----------
