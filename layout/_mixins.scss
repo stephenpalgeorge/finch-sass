@@ -1,0 +1,218 @@
+@use 'sass:list';
+@use 'sass:map';
+@use '../global/config';
+
+$all-sizes: () !default;
+
+/// BOX RESET
+/// ----------
+/// The `box-reset` mixin removes/resets all box-model related properties.
+/// Some of these properties can be ignored by setting one of the parameters to `false`.
+/// @param $size {Boolean} when false, `width` and `height` properties will not be reset
+/// @param $border {Boolean} when false, the `border` properties will not be reset
+@mixin box-reset($size: true, $border: true) {
+  padding: 0;
+  margin: 0;
+
+  @if $size {
+    width: initial;
+    height: initial;
+  }
+
+  @if $border {
+    border: none;
+  }
+}
+
+// box-reset utility class
+.box-reset { @include box-reset; }
+
+/// PADDING X
+/// ----------
+/// The `padding-x` mixin sets padding on the x-axis using logical properties if
+/// they're supported, and falling back to 'left' and 'right' if not.
+@mixin padding-x($size) {
+  $value: map.get($all-sizes, $size);
+  @if list.index(config.$global-values, $size) {
+    $value: $size;
+  }
+
+  @supports (padding-inline: 1rem) { padding-inline: $value; }
+  @supports not (padding-inline: 1rem) {
+    padding-left: $value;
+    padding-right: $value;
+  }
+}
+
+@mixin padding-y($size) {
+  $value: map.get($all-sizes, $size);
+  @if list.index(config.$global-values, $size) {
+    $value: $size;
+  }
+
+  @supports (padding-block: 1rem) { padding-block: $value; }
+  @supports not (padding-block: 1rem) {
+    padding-top: $value;
+    padding-bottom: $value;
+  }
+}
+
+@mixin margin-x($size) {
+  $value: map.get($all-sizes, $size);
+  $keywords: list.join(config.$global-values, (auto));
+  @if list.index($keywords, $size) {
+    $value: $size;
+  }
+
+  @supports (margin-inline: 1rem) { margin-inline: $value; }
+  @supports not (margin-inline: 1rem) {
+    margin-left: $value;
+    margin-right: $value;
+  }
+}
+
+@mixin margin-y($size) {
+  $value: map.get($all-sizes, $size);
+  $keywords: list.join(config.$global-values, (auto));
+  @if list.index($keywords, $size) {
+    $value: $size;
+  }
+
+  @supports (margin-block: 1rem) { margin-block: $value; }
+  @supports not (margin-block: 1rem) {
+    margin-top: $value;
+    margin-bottom: $value;
+  }
+}
+
+@each $size in map.keys($all-sizes) {
+  // `.padding-x:100`, `.padding-x:lg` etc.
+  .padding-x\:#{$size} { @include padding-x($size); }
+  // `.padding-y:900`, `.padding-y:sm` etc.
+  .padding-y\:#{$size} { @include padding-y($size); }
+  // `.margin-x:200`, `.margin-x:md` etc.
+  .margin-x\:#{$size} { @include margin-x($size); }
+  // `.margin-y:700`, `margin-y:xl` etc.
+  .margin-y\:#{$size} { @include margin-y($size); }
+}
+
+@mixin flex-axis($dir: row, $x: initial, $y: initial) {
+  // assume the default "row"
+  $x-axis: justify-content;
+  $y-axis: align-items;
+  // adjust values if "column" has been passed
+  @if $dir == column {
+    $x-axis: align-items;
+    $y-axis: justify-content;
+  }
+
+  display: flex;
+  flex-direction: $dir;
+  #{$x-axis}: $x;
+  #{$y-axis}: $y;
+}
+
+/// LAYOUT PRIMITIVES
+/// ----------
+
+/// BOX
+/// @example ```scss
+///   @use 'finch/layout' as lyt;
+///   @use 'finch/color' as clr;
+///
+///   .container {
+///     @include lyt.box(lg);
+///     background-color: clr.use(dark);
+///     color: clr.use(light);
+///     @todo - we should eventually be able to replace the above 2 lines with:
+///     ** @include clr.theme(dark, light, accent); **
+///   }
+/// ```
+@mixin box($pad-x: md, $pad-y: null, $reset: false) {
+  @if $reset { @include box-reset; }
+  @if not $pad-y {
+    $pad-y: $pad-x;
+  }
+
+  padding: map.get($all-sizes, $pad-y) map.get($all-sizes, $pad-x);
+  outline: .125rem solid transparent;
+  outline-offset: -.125rem;
+  * {
+    color: inherit;
+  }
+}
+
+@each $size in map.keys($all-sizes) {
+  // `.box:sm`, `.box:lg`, `.box:300` etc.
+  .box\:#{$size} {
+    @include box($pad-x: $size, $pad-y: $size);
+  }
+
+  // `.box:x-sm/y-md`, `.box:x-lg/y-xl`, `.box:x-200/y-300` etc.
+  @each $nested-size in map.keys($all-sizes) {
+    .box\:x-#{$size}\/y-#{$nested-size} {
+      @include box($pad-x: $size, $pad-y: $nested-size);
+    }
+  }
+}
+
+/// PILLAR
+@mixin pillar($max: null, $pad-x: md, $pad-y: null, $center-contents: false) {
+  margin-inline: auto;
+  @if not $pad-y {
+    $pad-y: $pad-x;
+  }
+  @include padding-x($pad-x);
+  @include padding-y($pad-y);
+
+  @if $max {
+    width: min(100%, #{$max});
+  }
+
+  @if $center-contents {
+    @include flex-axis(column, $x: center);
+  }
+}
+
+@each $size in map.keys($all-sizes) {
+  // `.pillar:lg`, `.pillar:xs`, `.pillar:300` etc
+  .pillar\:#{$size} {
+    @include pillar($max: null, $pad-x: $size, $pad-y: $size);
+  }
+
+  // `.pillar:x-lg/y-md`, `.pillar:x-500/y-900` etc
+  @each $nested-size in map.keys($all-sizes) {
+    .pillar\:x-#{$size}\/y-#{$nested-size} {
+      @include pillar($max: null, $pad-x: $size, $pad-y: $nested-size);
+    }
+  }
+}
+
+/// STACK
+@mixin stack($flow: lg, $nested-flow: null) {
+  $stack-gap: map.get($all-sizes, $flow);
+  $nested-stack-gap: $stack-gap;
+  @if $nested-flow {
+    // give everything that follows anything the 'nested' flow
+    // to begin with.
+    $nested-stack-gap: map.get($all-sizes, $nested-flow);
+    * + * { margin-top: $nested-stack-gap; }
+  }
+
+  // for direct descendants, override this with the 'flow' value
+  > * + * { margin-top: $stack-gap; }
+}
+
+@each $size in map.keys($all-sizes) {
+  // `.stack:md`, `.stack:500` etc
+  .stack\:#{$size} {
+    @include stack($flow: $size);
+  }
+
+  @each $nested-size in map.keys($all-sizes) {
+    // `.stack:md>sm`, `.stack:xl>lg`, `.stack:700>400` etc
+    .stack\:#{$size}\>#{$nested-size} {
+      @include stack($flow: $size, $nested-flow: $nested-size);
+    }
+  }
+}

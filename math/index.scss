@@ -1,7 +1,7 @@
 @use 'sass:list';
 @use 'sass:map';
 @use 'sass:math';
-@use '../utils/index';
+@use '../utils';
 
 /// TO RADIX
 /// ----------
@@ -35,6 +35,7 @@
 /// least once
 ///
 /// @example modulo(6, 4) // (quotient: 1, remainder: 2)
+///
 /// N.B. Sass already supports the % operator, and that should always be preferred except
 /// in the specific case when both the quotient and remainder need to be accessed.
 @function mod($numerator, $denominator) {

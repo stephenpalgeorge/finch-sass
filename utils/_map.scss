@@ -2,6 +2,7 @@
 @use 'sass:map';
 @use 'sass:meta';
 @use 'sass:string';
+@use './string' as str;
 
 /// MAP GET NTH
 /// ----------
@@ -139,4 +140,62 @@
 @debug "@function map-concat: #{map-concat((a: first, b: second), $separator: '-')}"; // expect first-second
 @debug "@function map-concat: #{map-concat((a: first, b: second), $keys: true, $separator: ', ', $glue: '-')}"; // expect a-first, b-second
 @debug "@function map-concat: #{map-concat((transform: .2s linear, color: .25s ease-out), $keys: true, $separator: ', ', $glue: ' ')}"; // expect 'transform .2s linear, color .25s ease-out'
+@debug "----------";
+
+/// MAP SET KEYS
+/// ----------
+/// The `map-set-keys` function sets multiple keys in a map to a common value. The keys are specified
+/// in a list that is passed to the function.
+/// @param $map {Map} the map that is to be acted on
+/// @param $keys {List} a list of keys that should be updated
+/// @param $value {any} the value to which all `$keys` should be set
+/// @return {Map}
+///
+/// @example map-set-keys((a: first, b: second, c: third), (a, c), finch); // (a: finch, b: second, c: finch)
+@function map-set-keys($map, $keys, $value) {
+  $result: ();
+  @each $key, $val in $map {
+    @if list.index($keys, $key) {
+      // if the current key is in the 'keys' list, we use the given `$value`
+      $result: map.set($result, $key, $value);
+    } @else {
+      // otherwise, we use the original value: `$val`
+      $result: map.set($result, $key, $val);
+    }
+  }
+
+  @return $result;
+}
+
+// @warn seems to be some sort of sass compiler bug here, if I try and interpolate this function value, it
+// throws an error.
+@debug map-set-keys((a: first, b: second, c: third), (a, c), test); // expect (a: test, b: second, c: test);
+@debug "----------";
+
+/// MAP SET MANY
+/// ----------
+/// The `map-set-many` function sets multiple keys in a map to a common value. The keys that should be
+/// updated are specified by providing a 'search' term; any key that matches this term will be updated.
+/// For example, passing `$match: border` would mean all keys `border`, `border-top-width`, `border-radius`...
+/// would be updated.
+/// @param $map {Map} the map that is to be acted on
+/// @param $match {String} the search term that should be used to filter the keys
+/// @param $value {any} the value to which all of the matching keys should be set
+/// @return {Map}
+///
+/// @example map-set-many((border-top-width: 2px, background-color: red, border-bottom-width: 3px), border, .25rem); // (border-top-width: .25rem, background-color: red, border-bottom-width: .25rem);
+@function map-set-many($map, $match, $value) {
+  $result: ();
+  @each $key, $val in $map {
+    @if str.match($key, $match) {
+      $result: map.set($result, $key, $value);
+    } @else {
+      $result: map.set($result, $key, $val);
+    }
+  }
+
+  @return $result;
+}
+
+@debug map-set-many((border: false, background: false, border-width: false), border, true);
 @debug "----------";

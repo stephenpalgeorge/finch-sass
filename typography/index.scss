@@ -1,3 +1,4 @@
+@use 'sass:list';
 @use 'sass:map';
 @use '../global/config';
 @use '../global/mixins' as m;
@@ -65,26 +66,6 @@ $-font-declarations: map.merge($-finch-fonts, $fonts);
   @return null;
 }
 
-/// USE MIXIN
-/// ----------
-/// The use mixin is a wrapper for the use function that allows for adjustments to be
-/// passed in that alter the font's properties. i.e. you might want to use 'body' font with
-/// a different line-height to the default value.
-/// @param $font-name {String} the name of the brand font that is to be used
-/// @param $options {String} a map of property - value pairs that will override the default font values
-/// @example
-/// p {
-///   @include typ.use(body, (line-height: 1.8, font-style: italic));
-/// }
-@mixin use($font-name, $options: null) {
-  font: use($font-name);
-  @if $options {
-    @each $key, $value in $options {
-      #{$key}: $value;
-    }
-  }
-}
-
 /// /*  --------------------------------  *\
 ///  *  UTILITY CLASSES
 /// \*  --------------------------------  */
@@ -97,6 +78,7 @@ $-prop-values: (
   font-family: $-families,
   line-height: config.$modular-scale,
   letter-spacing: config.$modular-scale\detail,
+  text-align: (left, center, right, start, end, justify, match-parent),
   text-indent: config.$modular-scale,
   text-transform: (none, capitalize, uppercase, lowercase, full-width, full-size-kana),
   word-spacing: config.$modular-scale,

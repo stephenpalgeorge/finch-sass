@@ -1,3 +1,9 @@
+// @todo - write a 'theme' mixin that accepts background, foreground and accent colors
+// we should alse be able to pass a list of selectors for 'accent' elements, these are the ones that will have
+// `color: $accent;` applied.
+// @todo - write a 'contrast-checker' function, should be used within 'theme' to check combinations against background
+// this should return a boolean, but in the 'false' case (contrast isn't good enough) it should also print a warning to the console.
+
 @forward 'functions';
 
 // sass modules
@@ -16,6 +22,7 @@
 $-utility-defaults: (
   color: false,
   background-color: false,
+  border-color: false,
 );
 
 $utils: () !default;

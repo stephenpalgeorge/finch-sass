@@ -1,0 +1,93 @@
+@use 'sass:list';
+@use 'sass:map';
+@use '../global/config';
+@use '../global/mixins' as m;
+@use '../utils' as *;
+
+$-utility-defaults: (
+  // margin properties
+  margin: false, margin-block: false, margin-inline: false, margin-block-start: false, margin-block-end: false, margin-inline-start: false,
+  margin-inline-end: false, margin-top: false, margin-right: false, margin-bottom: false, margin-left: false,
+  // padding properties
+  padding: false, padding-block: false, padding-inline: false, padding-block-start: false, padding-blocke-end: false,
+  padding-inline-start: false, padding-inline-end: false, padding-top: false, padding-right: false, padding-bottom: false, padding-left: false,
+  // overflow properties
+  overflow: false, overflow-x: false, overflow-y: false,
+  // border properties
+  border-width: false, border-block-width: false, border-inline-width: false, border-block-start-width: false, border-block-end-width: false,
+  border-inline-start-width: false, border-inline-end-width: false, border-top-width: false, border-right-width: false,
+  border-bottom-width: false, border-left-width: false,
+  border-radius: false, border-top-right-radius: false, border-bottom-right-radius: false, border-bottom-left-radius: false,
+  border-top-left-radius: false,
+  // others
+  display: false,
+  position: false,
+  z-index: false,
+);
+
+$utils: () !default;
+$utilities: map.merge($-utility-defaults, $utils);
+$responsive-utils: () !default;
+$responsive: map.merge($-utility-defaults, $responsive-utils);
+
+$-finch-keywords: (
+  xs: map.get(config.$modular-scale, 100),
+  sm: map.get(config.$modular-scale, 300),
+  md: map.get(config.$modular-scale, 400),
+  lg: map.get(config.$modular-scale, 700),
+  xl: map.get(config.$modular-scale, 900),
+);
+$keywords: () !default;
+$-presets: map.merge($-finch-keywords, $keywords);
+$-all-sizes: map.merge(config.$modular-scale, $-presets);
+
+@forward './mixins' with ($all-sizes: $-all-sizes);
+
+/// USE FUNCTION
+/// ----------
+/// The `use` function returns a size taken from a specified scale (either the default,
+/// modular scale, or the 'detail' scale).
+/// @param $size {Number} an integer between 0 - 1000, in increments of 100
+/// @param $detail {Boolean} whether or not to use the 'detail' scale
+/// @return {Length}
+///
+/// @example use(600); // 1.563rem
+@function use($size, $detail: false) {
+  $value: map.get($-all-sizes, $size);
+  @if $detail {
+    $value: map.get(config.$modular-scale\detail, $size);
+  }
+
+  @if not $value {
+    @warn 'No size found for: "#{$size}"';
+    @return null;
+  }
+
+  @return $value;
+}
+
+/// /* -------------------------------- *\
+///    UTILITIES
+/// \* -------------------------------- */
+
+$-border-width-values: map.merge(config.$modular-scale\detail, (thin: thin, medium: medium, thick: thick));
+$-border-radius-values: map.merge(config.$modular-scale\detail, (none: 0, max: 100vw));
+$-overflow-values: (visible, hidden, clip, scroll, auto);
+
+$-prop-values: (
+  overflow: $-overflow-values, overflow-x: $-overflow-values, overflow-y: $-overflow-values,
+  display: (block, inline, inline-block, flex, inline-flex, grid, inline-grid, flow-root, none, contents, table, table-row, list-item),
+  position: (static, relative, absolute, fixed, sticky),
+  z-index: (auto),
+);
+
+$-prop-values: map-set-many($-utility-defaults, width, $-border-width-values);
+$-prop-values: map-set-many($-prop-values, radius, $-border-radius-values);
+$-prop-values: map-set-many($-prop-values, padding, config.$modular-scale);
+$-prop-values: map-set-many($-prop-values, margin, config.$modular-scale);
+
+@each $prop, $flag in $utilities {
+  @if $flag or map.get($responsive, $prop) {
+    @include m.gen-utils($prop, map.get($-prop-values, $prop), $responsive: map.get($responsive, $prop));
+  }
+}

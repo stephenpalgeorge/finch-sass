@@ -1,7 +1,5 @@
 # Finch Color Module
 
-[//]: # (@todo - write 'use' mixin documentation)
-
 The 'color' module in Finch provides a set of useful functions for working with color in Sass. It aids in creating, editing and using a palette of predefined brand colors.
 
 ## Module configuration
@@ -94,3 +92,29 @@ If a property is flagged for responsive utility classes in the module configurat
 ```
 
 For example `.color:indigo@sm` and `.background-color:orange@lg!`. Again, the `!` signals `!important` styles.
+
+## Other functions
+
+The color modules exposes a number of other functions that are more low-level and probably will be less useful in general stylesheet authoring. They are, however, forwarded out of the module and made available under the module namespace.
+
+### Create shades
+
+The `create-shades` function is used within the color module to generate the 'shades' maps that are associated with each color in finch. You could pass any color value into this function, and it will return a map with keys from 0 to 1000 (in increments of 100), with each increment representing a lighter shade of the base colour.
+
+```scss
+@use 'finch/color' as clr;
+
+$green-shades: clr.create-shades(#00ADAA);
+```
+
+### Conversion functions
+
+The color module also exposes some utility functions for converting a color from one color space to another. These would mostly be used if you wanted to ensure consistent output in different contexts, or for debugging purposes.
+
+```scss
+@use 'finch/color' as clr;
+
+$brand-red: clr.to-hsl(#AA0800);
+$brand-green: clr.to-rgb(#00ADAA);
+$brand-blue: clr.to-hex(aqua);
+```
