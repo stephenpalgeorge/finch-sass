@@ -33,6 +33,16 @@
 ///
 /// @example list-reverse((1, 2, 3)) // (3, 2, 1)
 @function list-reverse($list, $recursive: false) {
+  // type-safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($recursive) != bool { @error 'Second argument `$recursive` must be of type "bool"'; }
+
+  // no point carrying on if there's only 1 item in the list...
+  @if list.length($list) == 1 {
+    @warn "Nothing to reverse - the list you provided only has 1 item in it";
+    @return $list;
+  }
+
   $result: ();
   @for $i from list.length($list) through 1 {
     $current: list.nth($list, $i);
@@ -61,6 +71,15 @@
 /// @example list-concat((1, 2, 3)) // 123
 /// @example list-concat((a, b, c), "-") // a-b-c
 @function list-concat($list, $separator: null) {
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+
+  // no point continuing if list only has 1 item in it...
+  @if list.length($list) == 1 {
+    @warn "Nothing to concatenate - the list you provided only has 1 item in it";
+    @return $list;
+  }
+
   $value: null;
   @each $item in $list {
     @if $separator and list.index($list, $item) != 1 {
@@ -87,6 +106,9 @@
 ///
 /// @example list-list-index((1, 2, 3, 2, 5), 2) // 4
 @function list-last-index($list, $item) {
+  // type safety
+  @if meta.type-of($list) != list { @error 'First agument `$list` must be of type "list"'; }
+
   @for $i from list.length($list) through 1 {
     @if list.nth($list, $i) == $item {
       @return $i;
@@ -111,6 +133,8 @@
 ///
 /// @example list-prepend((1, 2), 3) // (3, 1, 2)
 @function list-prepend($list, $item) {
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
   @return list.join($item, $list);
 }
 
@@ -131,6 +155,17 @@
 ///
 /// @example list-insert((1, 2, 3), 4, 2) // (1, 4, 2, 3)
 @function list-insert($list, $item, $index: null) {
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($index) != null and meta.type-of($index) != number { @error "Third argument `$index` must be a number, or `null`"; }
+
+  // if `$index` is not in the range of the list length, there's no point
+  // using this function - something like 'append', 'prepend', 'join' etc will
+  // do the trick instead:
+  @if $index < 1 or $index > list.length($list) {
+    @warn 'You passed an `$index` that is outside of the list\'s range - consider using a different function to join lists, or append an item to the end';
+  }
+
   @if $index == null {
     $index: list.length($list) + 1;
   }
@@ -164,8 +199,17 @@
 ///
 /// @example list-remove((1, 2, 3), 2) // (1, 3)
 @function list-remove($list, $target, $recursive: false) {
-  $result: ();
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($recursive) != bool { @error 'Third argument `$recursive` must be of type "bool"'; }
 
+  // no point carrying on if the target item is not in the list at all
+  @if not list-has($list, $target, $recursive) {
+    @warn 'Nothing to remove - the given list does not contain the target item';
+    @return $list;
+  }
+
+  $result: ();
   @for $i from 1 through list.length($list) {
     $current: list.nth($list, $i);
     @if meta.type-of($current) == list and $recursive {
@@ -194,8 +238,17 @@
 ///
 /// @example list-remove-nth((a, b, c, d), 3) // (a, b, d)
 @function list-remove-nth($list, $index) {
-  $result: ();
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($index) != number { @error 'Second argument `$index` must be of type "number"'; }
 
+  // can't remove an item at an index that is outside of the list range
+  @if $index < 1 or $index > list.length($list) {
+    @warn "Nothing to remove - the given index is not within the range of the given list";
+    @return $list;
+  }
+
+  $result: ();
   @for $i from 1 through list.length($list) {
     @if $i != $index {
       $result: list.append($result, list.nth($list, $i));
@@ -220,8 +273,17 @@
 ///
 /// @example list-replace((a, b, c), b, x) // (a, x, c)
 @function list-replace($list, $target, $item, $recursive: false) {
-  $result: ();
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($recursive) != bool { @error 'Fourth argument `$recursive` must be of type "bool"'; }
 
+  // no point trying to replace something that doesn't exist...
+  @if not list-has($list, $target, $recursive) {
+    @warn 'Nothing to replace - the specified target was not found in the specified list';
+    @return $list;
+  }
+
+  $result: ();
   @for $i from 1 through list.length($list) {
     $current: list.nth($list, $i);
     @if meta.type-of($current) == list and $recursive {
@@ -252,8 +314,17 @@
 ///
 /// @example list-replace-nth((a, b, c, d), 3, x) // (a, b, x, d)
 @function list-replace-nth($list, $index, $item) {
-  $result: ();
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($index) != number { @error 'Second argument `$index` must be of type "number"'; }
 
+  // can't replace something at a location that's not in the list...
+  @if $index < 1 or $index > list.length($list) {
+    @warn 'Nothing to replace - can\'t replace an item at index "#{$index}" as that is outside of the range of the given list';
+    @return $list;
+  }
+
+  $result: ();
   @for $i from 1 through list.length($list) {
     @if $i == $index {
       $result: list.append($result, $item);
@@ -279,6 +350,22 @@
 ///
 /// @example list-slice((a, b, c, d, e), 2, 4) // (b, c, d)
 @function list-slice($list, $start: 1, $end: list.length($list)) {
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($start) != number { @error 'Second argument `$start` must be of type "number"'; }
+  @if meta.type-of($end) != number { @error 'Third argument `$end` must be of type "number"'; }
+
+  // cannot slice list if start or end indices are out of range...
+  @if $start < 1 or $start > list.length($list) {
+    @warn 'Cannot slice - the start index is outside of the range of the list';
+    @return $list;
+  }
+
+  @if $end < 1 or $end < $start or $end > list.length($list) {
+    @warn 'Cannot slice - the end index is either smaller than start, or outside of the range of the list';
+    @return $list;
+  }
+
   $result: ();
   @for $i from $start through $end {
     $result: list.append($result, list.nth($list, $i));
@@ -303,8 +390,17 @@
 ///
 /// @example list-shift((a, b, c, d), 2) // (c, d, a, b)
 @function list-shift($list, $interval: 1) {
-  $result: ();
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($interval) != number { @error 'Second argument `$interval` must be of type number'; }
 
+  // no point carrying on if interval is 0, as that would leave the list in place anyway...
+  @if $interval == 0 {
+    @warn 'Nothing to shift - you passed an interval of 0';
+    @return $list;
+  }
+
+  $result: ();
   @for $i from 0 to list.length($list) {
     // brief explanation of the maths below.
     // Turns out Sass modulo operator uses a 'floored' modulo when the dividend
@@ -340,6 +436,11 @@
 ///
 /// @example list-has((a, b, c), b) // 2
 @function list-has($list, $query, $recursive: false, $fuzzy: false) {
+  // type safety
+  @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
+  @if meta.type-of($recursive) != bool { @error 'Third argument `$recursive` must be of type "bool"'; }
+  @if meta.type-of($fuzzy) != bool { @error 'Fourth argument `$fuzzy` must be of type "bool"'; }
+
   @for $i from 1 through list.length($list) {
     $current: list.nth($list, $i);
     @if meta.type-of($current) == list and $recursive {
