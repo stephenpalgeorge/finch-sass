@@ -1,6 +1,7 @@
 @use 'sass:list';
 @use 'sass:map';
 @use '../global/config';
+@use '../color' as clr;
 
 $all-sizes: () !default;
 
@@ -82,6 +83,31 @@ $all-sizes: () !default;
   @supports not (margin-block: 1rem) {
     margin-top: $value;
     margin-bottom: $value;
+  }
+}
+
+@mixin border($sides: (top, right, bottom, left), $color, $width: 400, $style: solid) {
+  $border-value: #{map.get(config.$modular-scale\detail, $width)} #{$style} #{clr.use($color)};
+
+  @if list.length($sides) == 4 { border: $border-value; }
+  @else {
+    @each $side in $sides { border-#{$side}: $border-value; }
+  }
+}
+
+@mixin border-x($color, $width: 400, $style) {
+  $border-value: #{map.get(config.$modular-scale\detail, $width)} #{$style} #{clr.use($color)};
+  @supports (border-inline: 1px solid black) { border-inline: $border-value; }
+  @supports not (border-inline: 1px solid black) {
+    @include border((left, right), $color, $width: $style);
+  }
+}
+
+@mixin border-y($color, $width: 400, $style) {
+  $border-value: #{map.get(config.$modular-scale\detail, $width)} #{$style} #{clr.use($color)};
+  @supports (border-block: 1px solid black) { border-block: $border-value; }
+  @supports not (border-block: 1px solid black) {
+    @include border((top, bottom), $color, $width, $style);
   }
 }
 
