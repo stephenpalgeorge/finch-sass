@@ -130,3 +130,64 @@
 @debug "@function to-hsl: #{to-hsl(#B1021C)}"; // expect hsl(351, 98%, 35%)
 @debug "@function to-hsl: #{to-hsl(rgb(60, 171, 236))}"; // expect hsl(202, 82%, 58%)
 @debug "----------";
+
+/// LUMINANCE
+/// ----------
+/// The `luminance` function returns the luminance of a given color.
+/// @param $color {Color} the color from which the luminance will be calculated
+/// @return {Number} the relative luminance of the color
+/// @see https://en.wikipedia.org/wiki/Relative_luminance
+/// @see https://planetcalc.com/7779/
+@function luminance($color) {
+  $real-values: (
+    red: math.div(color.red($color), 255),
+    green: math.div(color.green($color), 255),
+    blue: math.div(color.blue($color), 255),
+  );
+
+  $linear-values: ();
+  @each $key, $value in $real-values {
+    $result: math.div($value, 12.92);
+    @if $value > 0.03928 {
+      $result: math.pow(math.div(($value + 0.055), 1.055), 2.4);
+    }
+
+    $linear-values: map.merge($linear-values, ($key: $result));
+  }
+
+  $red-lum: map.get($linear-values, red) * 0.2126;
+  $green-lum: map.get($linear-values, green) * 0.7152;
+  $blue-lum: map.get($linear-values, blue) * 0.0722;
+
+  @return ($red-lum + $green-lum + $blue-lum) * 100;
+}
+
+@debug "@function luminance: #{luminance(#FA7014)}";
+@debug "----------";
+
+/// CONTRAST
+/// ----------
+/// The `contrast` function compares 2 colours and checks the contrast in the relative
+/// luminance of each colour. It returns a number that would be considered the first part
+/// of a ratio (i.e. <number>:1). The function will print warnings in the sass compiler
+/// if the ratio fails a11y standards.
+/// @param $first {Color} the first of the two colours that are to be compared
+/// @param $second {Color} the second of the two colours that are to be compared
+/// @return {Number} the contrast ratio between the 2 numbers
+@function contrast($first, $second) {
+  // get the luminance of the passed colors
+  $lum-first: luminance($first);
+  $lum-second: luminance($second);
+  @debug $lum-first;
+  @debug $lum-second;
+
+  $contrast: math.div(math.max($lum-first, $lum-second) + 0.05, math.min($lum-first, $lum-second) + 0.05);
+  @if $contrast < 4.5 {
+    @warn 'A11y warning: colors #{$first} and #{$second} do not have sufficient contrast';
+  } @else if $contrast < 7 {
+    @warn 'A11y warning: colors #{$first} and #{$second} have a low contrast and should only be used in combination for large text or graphical objects';
+  }
+  @return $contrast;
+}
+
+@debug "@function contrast: #{contrast(#FA7014, #F7F8F9)}"; // expect 2.84

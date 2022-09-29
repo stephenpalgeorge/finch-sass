@@ -133,6 +133,39 @@ $-shades-map: ();
   transition: #{$transition};
 }
 
+/// THEME
+/// ----------
+/// The `theme` mixin provides a simple API for color-theming a section of UI. It applies a background color,
+/// a foreground color (which is set as the `color` prop for all elements within the container). The mixin adds
+/// the beneficial DX of contrast-checking the colors that are passed in.
+/// @param $background {Color} the background color
+/// @param $foreground {Color} the foreground color, which will be applied to all child elements
+///
+/// @example ```scss
+///   @use 'finch/color' as clr;
+///   section.highlight {
+///     @include clr.theme(#222, #f7f8f9);
+///   }
+/// ```
+@mixin theme($background, $foreground) {
+  $contrast\bg-fg: contrast($background, $foreground);
+  $contrast\bg-ac: contrast($background, $accent);
+
+  background-color: $background;
+  color: $foreground;
+  * {
+    color: inherit;
+  }
+
+  @each $selector in map.keys($accent-targets) {
+    #{$selector} {
+      @each $prop in map.get($accent-targets, $selector) {
+        #{$prop}: $accent;
+      }
+    }
+  }
+}
+
 /// COMPLEMENTARY
 /// ----------------
 /// Returns a color or map of shades for the color that is the complement of the specified color.
