@@ -15,10 +15,14 @@
 ///
 /// @example map-get-nth((a: first, b: second, c: third), 2) // second
 @function map-get-nth($map, $index) {
+  // type safety
+  @if meta.type-of($map) != map { @error 'First argument `$map` must be of type "map"'; }
+  @if meta.type-of($index) != number { @error 'Second argument `$index` must be of type "number"'; }
+
   $keys: map.keys($map);
   $target: list.nth($keys, $index);
   @if not $target {
-    @warn 'No map item found at index "#{$index}"';
+    @warn 'Cannot get - no map item found at index "#{$index}"';
     @return null;
   }
 
@@ -39,19 +43,22 @@
 ///
 /// @example map-index((a: first, b: second, c: third), c) // 3
 @function map-index($map, $item, $search: key) {
+  // type safety
+  @if meta.type-of($map) != map { @error 'First argument `$map` must be of type "map"'; }
+
+  // validate the `$search` param
+  @if $search != key and $search != value { @error 'Third argument `$search` must be one of "key" or "value"'; }
+
   $items: ();
   @if $search == key {
     $items: map.keys($map);
   } @else if $search == value {
     $items: map.values($map);
-  } @else {
-    @warn '#search must be "key" or "value"';
-    @return null;
   }
 
   $index: list.index($items, $item);
   @if not $index {
-    @warn 'Map does not have any item for #{$search}: "#{$item}"';
+    @warn 'Map does not have any item for #{$search} "#{$item}"';
     @return null;
   }
   @return $index;
@@ -72,7 +79,11 @@
 ///
 /// @example map-get-next((a: 1, b: 2, c: 3, d: 4), b); // expect 3
 @function map-get-next($map, $current, $search: key) {
+  // type safety
+  @if meta.type-of($map) != map { @error 'First argument `$map` must be of type "map"'; }
+
   // get index of the current item
+  // we don't validate the `$search` param here, as we'll get the warning from `map-index` anyway
   $index: map-index($map, $current, $search);
   $target: $index + 1;
   // handle wrapping
@@ -90,7 +101,11 @@
 
 /// MAP GET PREV
 @function map-get-prev($map, $current, $search: key) {
+  // type safety
+  @if meta.type-of($map) != map { @error 'First argument `$map` must be of type "map"'; }
+
   // get index of the current item
+  // we don't validate the `$search` param here as we'll get the warning from `map-index` anyway
   $index: map-index($map, $current, $search);
   $target: $index - 1;
   // handle wrapping
@@ -119,6 +134,10 @@
 ///
 /// @example map-concat((a: first, b: second), $glue: "-") // first-second
 @function map-concat($map, $keys: false, $separator: null, $glue: " ") {
+  // type safety
+  @if meta.type-of($map) != map { @error 'First argument `$map` must be of type "map"'; }
+  @if meta.type-of($keys) != bool { @error 'Second argument `$keys` must be of type "bool"'; }
+
   $result: "";
   @each $key, $value in $map {
     $current: #{$value};
@@ -153,6 +172,17 @@
 ///
 /// @example map-set-keys((a: first, b: second, c: third), (a, c), finch); // (a: finch, b: second, c: finch)
 @function map-set-keys($map, $keys, $value) {
+  // type safety
+  @if meta.type-of($map) != map { @error 'First argument `$map` must be of type "map"'; }
+  @if meta.type-of($keys) != list { @error 'Second argument `$keys` must be of type "list"'; }
+
+  // if there's only one item in the `$keys` list, it's a bit pointless to use this function
+  // just use map.set, or map.merge etc instead...
+  // but we still carry on and give the developer the desired result...
+  @if list.length($keys) < 2 {
+    @warn 'The `$keys` list you\'ve provided only contains one item - consider using one of Sass\'s built-in map methods to set this value instead';
+  }
+
   $result: ();
   @each $key, $val in $map {
     @if list.index($keys, $key) {
@@ -185,6 +215,9 @@
 ///
 /// @example map-set-many((border-top-width: 2px, background-color: red, border-bottom-width: 3px), border, .25rem); // (border-top-width: .25rem, background-color: red, border-bottom-width: .25rem);
 @function map-set-many($map, $match, $value) {
+  // type safety
+  @if meta.type-of($map) != map { @error 'First argument `$map` must be of type "map"'; }
+
   $result: ();
   @each $key, $val in $map {
     @if str.match($key, $match) {
