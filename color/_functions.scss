@@ -3,7 +3,7 @@
 @use 'sass:math';
 @use 'sass:string';
 
-@use '../math/index' as mth;
+@use '../utils';
 
 /// CREATE SHADES
 /// ----------
@@ -57,7 +57,7 @@
   $output: ();
   @each $channel, $value in $channels {
     @if $value > 0 {
-      $hexValue: mth.to-radix($value, 16);
+      $hexValue: utils.to-radix($value, 16);
       @if $value < 16 { $hexValue: "0#{$hexValue}"; }
       // push each channel into the `$output` map, e.g. (red: 255, green: 0...)
       $output: map.set($output, $channel, $hexValue);
@@ -68,7 +68,7 @@
 
   @if $alpha {
     $opacity: 255 * color.alpha($val);
-    $opacityHex: mth.to-radix($opacity, 16);
+    $opacityHex: utils.to-radix($opacity, 16);
     @return #{'#'}#{map.get($output, red)}#{map.get($output, green)}#{map.get($output, blue)}#{$opacityHex};
   }
 
@@ -81,6 +81,8 @@
 @debug "@function to-hex: #{to-hex(rgba(177, 2, 28, .5), $alpha: true)}"; // expect #b1021c80
 @debug "----------";
 
+
+@warn 'Conversion functions will be deprecated by Sass Color Spaces, which has a `to-space` function';
 /// TO RGB
 /// ----------
 /// This conversion function turns a color value of any color space into its `rgb` representation.
@@ -131,6 +133,7 @@
 @debug "@function to-hsl: #{to-hsl(rgb(60, 171, 236))}"; // expect hsl(202, 82%, 58%)
 @debug "----------";
 
+@warn '`red`, `green` and `blue` channels will be deprecated by Sass Color Spaces';
 /// LUMINANCE
 /// ----------
 /// The `luminance` function returns the luminance of a given color.
@@ -139,6 +142,12 @@
 /// @see https://en.wikipedia.org/wiki/Relative_luminance
 /// @see https://planetcalc.com/7779/
 @function luminance($color) {
+  // in Sass Color Spaces, sRGB will *not* be considered a legacy space,
+  // and I should, therefore, be able to do *something like* this:
+  // $color: color.to-space($color, srgb);
+  // and then get the red, blue, green channels from $color, this will also
+  // remove the need to do the `/255` division below, since that's what sRGB
+  // actually gives us - a value between 0 - 1 for each channel.
   $real-values: (
     red: math.div(color.red($color), 255),
     green: math.div(color.green($color), 255),
@@ -178,16 +187,19 @@
   // get the luminance of the passed colors
   $lum-first: luminance($first);
   $lum-second: luminance($second);
-  @debug $lum-first;
-  @debug $lum-second;
 
-  $contrast: math.div(math.max($lum-first, $lum-second) + 0.05, math.min($lum-first, $lum-second) + 0.05);
+  // N.B. when (if) you ever look up the formula for contrast checking, it'll tell you (L1 + 0.05) / (L2 + 0.05),
+  // however this assumes a value of L that is between 0 - 1, but our luminance function returns a *percentage*
+  // value, between 0 - 100. We could divide each luminance by 100 so the above formula works, but I thought it
+  // was simpler to simple multiply the `0.05` by 100 instead, and therefore + 5 in both cases.
+  $contrast: math.div(math.max($lum-first, $lum-second) + 5, math.min($lum-first, $lum-second) + 5);
   @if $contrast < 4.5 {
     @warn 'A11y warning: colors #{$first} and #{$second} do not have sufficient contrast';
   } @else if $contrast < 7 {
     @warn 'A11y warning: colors #{$first} and #{$second} have a low contrast and should only be used in combination for large text or graphical objects';
   }
+
   @return $contrast;
 }
 
-@debug "@function contrast: #{contrast(#FA7014, #F7F8F9)}"; // expect 2.84
+@debug "@function contrast: #{contrast(#FA7014, #222)}"; // expect 19.4...

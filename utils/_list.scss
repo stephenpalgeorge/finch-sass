@@ -157,12 +157,12 @@
 @function list-insert($list, $item, $index: null) {
   // type safety
   @if meta.type-of($list) != list { @error 'First argument `$list` must be of type "list"'; }
-  @if meta.type-of($index) != null and meta.type-of($index) != number { @error "Third argument `$index` must be a number, or `null`"; }
+  @if $index and meta.type-of($index) != number { @error "Third argument `$index` must be a number, or `null`"; }
 
   // if `$index` is not in the range of the list length, there's no point
   // using this function - something like 'append', 'prepend', 'join' etc will
   // do the trick instead:
-  @if $index < 1 or $index > list.length($list) {
+  @if $index and ($index < 1 or $index > list.length($list)) {
     @warn 'You passed an `$index` that is outside of the list\'s range - consider using a different function to join lists, or append an item to the end';
   }
 

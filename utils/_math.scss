@@ -1,7 +1,7 @@
 @use 'sass:list';
 @use 'sass:map';
 @use 'sass:math';
-@use '../utils';
+@use './list' as *;
 
 /// TO RADIX
 /// ----------
@@ -22,7 +22,11 @@
     $digits: list.append($digits, list.nth($representations, map.get($parts, remainder) + 1), $separator: comma);
   }
 
-  @return utils.list-concat(utils.list-reverse($digits));
+  @if list.length($digits) > 1 {
+    $digits: list-concat(list-reverse($digits));
+  }
+
+  @return $digits;
 }
 
 /// MOD

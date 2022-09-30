@@ -1,3 +1,4 @@
+@use 'sass:meta';
 @use 'sass:string';
 
 /// SLUGIFY
@@ -12,9 +13,16 @@
 ///
 /// @example slugify("This is Finch") // "this-is-finch"
 @function slugify($value, $glue: '-') {
+  // type safety
+  @if meta.type-of($value) != string { @error 'First argument `$value` must be of type "string"'; }
+  @if meta.type-of($glue) != string { @error 'Second argument `$value` must be of type "stirng"'; }
+
+  // cast the value to lower case
   $value: string.to-lower-case($value);
 
   $result: "";
+  // parse the string - step through one character at a time and if it's a 'space',
+  // use the `$glue` instead.
   @for $i from 1 through string.length($value) {
     $char: string.slice($value, $i, $i);
     @if $char == " " {
@@ -63,6 +71,9 @@
 ///
 /// @example match("finch-sass", "sass") // true
 @function match($haystack, $needle, $exact: false) {
+  // type safety
+  @if meta.type-of($exact) != bool { @error 'Third argument `$exact` must be of type "bool"'; }
+
   // normalise the values
   // to compare the values, we want to coerce them both to
   // being strings, we also 'lower case' them so case insensitive
@@ -102,6 +113,12 @@
   $end: $start + string.length($target);
   @if not $start { @return null; }
 
+  // no point carrying on if the target isn't in the string at all
+  @if not match($string, $target) {
+    @warn 'Nothing to replace - the specified target doesn\'t exist in the given string';
+    @return $string;
+  }
+
   // initialise an empty string
   $result: "";
   // $initial is the portion of the string before and upto the $target value
@@ -124,4 +141,30 @@
 @debug "@function replace: #{replace("finch-sass", "sass", "styles")}"; // expect "finch-styles"
 @debug "@function replace: #{replace("finch-color-module", "color", "layout")}"; // expect "finch-typography-module"
 @debug "@function replace: #{replace("finah-sass", "a", "c", $global: false)}"; // expect "finch-sass"
+@debug "----------";
+
+/// CHAR AT
+/// ----------
+/// The `char-at` function returns that character at a specified position in a string
+/// @param $string {String} the string that is to be read
+/// @param $index {Number} the position in the string from which the character should be read
+/// @return {String} a single character
+///
+/// @example char-at(finch, 4) // 'c'
+@function char-at($string, $index) {
+  // type safety
+  @if meta.type-of($string) != string { @error 'First argument `$string` must be of type "string"'; }
+  @if meta.type-of($index) != number { @error 'Second argument `$index` must be of type "number"'; }
+
+  // validate the `$index`
+  @if $index < 1 or $index > string.length($string) {
+    @warn 'No character there - the given index is not in the range of the given string';
+    @return null;
+  }
+
+  // read one character from the given index
+  @return string.slice($string, $index, $index);
+}
+
+@debug "@function char-at: #{char-at('finch', 3)}"; // expect 'n'
 @debug "----------";
