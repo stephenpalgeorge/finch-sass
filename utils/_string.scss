@@ -1,5 +1,19 @@
 @use 'sass:meta';
 @use 'sass:string';
+@use '../config';
+
+/* -------------------------------- *\
+   FILE INDEX
+\* -------------------------------- */
+
+/*
+ *  1. slugify: convert a string into a machine-readable format.
+ *  2. normalize: convert any value of any type into a lowercase string.
+ *  3. match: test a needle against a haystack.
+ *  4. replace: replace a portion of a string with a given value.
+ *  5. char-at: return the character at a given position.
+ *
+ */
 
 /// SLUGIFY
 /// ----------
@@ -35,9 +49,11 @@
   @return $result;
 }
 
-@debug "@function slugify: #{slugify('Hello Finch')}"; // expect "hello-finch"
-@debug "@function slugify: #{slugify('Hello Finch', '_')}"; // expect "hello_finch"
-@debug "----------";
+@if config.$debug {
+  @debug "@function slugify: #{slugify('Hello Finch')}"; // expect "hello-finch"
+  @debug "@function slugify: #{slugify('Hello Finch', '_')}"; // expect "hello_finch"
+  @debug "----------";
+}
 
 /// NORMALIZE
 /// ----------
@@ -52,9 +68,11 @@
   @return string.to-lower-case(#{$value});
 }
 
-@debug "@function normalize: #{normalize(400)}"; // expect "400"
-@debug "@function normalize: #{normalize("Finch Sass")}"; // expect "finch sass"
-@debug "----------";
+@if config.$debug {
+  @debug "@function normalize: #{normalize(400)}"; // expect "400"
+  @debug "@function normalize: #{normalize("Finch Sass")}"; // expect "finch sass"
+  @debug "----------";
+}
 
 /// MATCH
 /// ----------
@@ -90,11 +108,13 @@
   @return $match and $match > 0;
 }
 
-@debug "@function match: #{match(a, a)}"; // expect true
-@debug "@function match: #{match(43, "43")}"; // expect true
-@debug "@function match: #{match(143, "4")}"; // expect true
-@debug "@function match: #{match(143, "4", $exact: true)}"; // expect false
-@debug "----------";
+@if config.$debug {
+  @debug "@function match: #{match(a, a)}"; // expect true
+  @debug "@function match: #{match(43, "43")}"; // expect true
+  @debug "@function match: #{match(143, "4")}"; // expect true
+  @debug "@function match: #{match(143, "4", $exact: true)}"; // expect false
+  @debug "----------";
+}
 
 /// REPLACE
 /// ----------
@@ -136,12 +156,14 @@
   @return $result;
 }
 
-@debug "@function replace: #{replace("finch-sass", "a", "c")}"; // expect "finch-sass"
-@debug "@function replace: #{replace("finch-scss", "c", "a")}"; // expect "finah-sass"
-@debug "@function replace: #{replace("finch-sass", "sass", "styles")}"; // expect "finch-styles"
-@debug "@function replace: #{replace("finch-color-module", "color", "layout")}"; // expect "finch-typography-module"
-@debug "@function replace: #{replace("finah-sass", "a", "c", $global: false)}"; // expect "finch-sass"
-@debug "----------";
+@if config.$debug {
+  @debug "@function replace: #{replace("finch-sass", "a", "c")}"; // expect "finch-sass"
+  @debug "@function replace: #{replace("finch-scss", "c", "a")}"; // expect "finah-sass"
+  @debug "@function replace: #{replace("finch-sass", "sass", "styles")}"; // expect "finch-styles"
+  @debug "@function replace: #{replace("finch-color-module", "color", "layout")}"; // expect "finch-typography-module"
+  @debug "@function replace: #{replace("finah-sass", "a", "c", $global: false)}"; // expect "finch-sass"
+  @debug "----------";
+}
 
 /// CHAR AT
 /// ----------
@@ -166,5 +188,7 @@
   @return string.slice($string, $index, $index);
 }
 
-@debug "@function char-at: #{char-at('finch', 3)}"; // expect 'n'
-@debug "----------";
+@if config.$debug {
+  @debug "@function char-at: #{char-at('finch', 3)}"; // expect 'n'
+  @debug "----------";
+}

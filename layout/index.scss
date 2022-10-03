@@ -1,7 +1,7 @@
 @use 'sass:list';
 @use 'sass:map';
-@use '../global/config';
-@use '../global/mixins' as m;
+@use '../config';
+@use '../config/mixins' as m;
 @use '../utils' as *;
 
 $-utility-defaults: (
@@ -83,8 +83,8 @@ $-prop-values: (
 
 $-prop-values: map-set-many($-utility-defaults, width, $-border-width-values);
 $-prop-values: map-set-many($-prop-values, radius, $-border-radius-values);
-$-prop-values: map-set-many($-prop-values, padding, config.$modular-scale);
-$-prop-values: map-set-many($-prop-values, margin, config.$modular-scale);
+$-prop-values: map-set-many($-prop-values, padding, map.merge(config.$modular-scale, $-presets));
+$-prop-values: map-set-many($-prop-values, margin, map.merge(config.$modular-scale, $-presets));
 
 @each $prop, $flag in $utilities {
   @if $flag or map.get($responsive, $prop) {

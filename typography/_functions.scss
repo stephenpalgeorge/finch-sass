@@ -1,5 +1,5 @@
 @use 'sass:map';
-@use '../global/config';
+@use '../config';
 
 @function gen-font($family, $size, $line-height, $style: normal, $variant: normal, $weight: normal) {
   $font-size: map.get(config.$modular-scale, $size);

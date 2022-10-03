@@ -1,0 +1,95 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use 'index' as *;
+
+/// GENERATE UTILITY CLASSES
+/// ----------
+///
+@mixin gen-utils($prop, $values, $responsive: false) {
+  $label: map.get($property-labels, $prop);
+  @if meta.type-of($values) == list {
+    /// $values could be a list, e.g. `gen-utils('text-align', (left, center, right))`.
+    /// create classes like `.text-align:center` and `.text-align:center!`.
+    @each $val in $values {
+      .#{$label}\:#{$val} { #{$prop}: $val; }
+      .#{$label}\:#{$val}\! { #{$prop}: $val !important; }
+    }
+
+    /// create classes like `.text-align:center@sm` and `.text-align:left@md!`.
+    @if $responsive {
+      @each $point, $pixels in $breaks {
+        @each $val in $values {
+          .#{$label}\:#{$val}\@#{point} {
+            @media screen and (min-width: $pixels) {
+              #{$prop}: $val;
+            }
+          }
+
+          .#{$label}\:#{$val}\@#{$point}\! {
+            @media screen and (min-width: $pixels) {
+              #{$prop}: $val !important;
+            }
+          }
+        }
+      }
+    }
+  } @else if meta.type-of($values) == map {
+    /// more likely, $values is a map, e.g. `gen-utils('color', (red: #ff0000, blue: #0000ff))`.
+    /// create classes like `.color:red` and `.background-color:blue!`
+    @each $key, $val in $values {
+      @if meta.type-of($val) == map {
+        @each $nested-key, $nested-val in $val {
+          /// $values could contain nested maps, we only support 2 deep, but
+          /// this should create class names for colors like: `.color:red\100` or `.color.blue\dark`
+          .#{$label}\:#{"" + $key}\:#{"" + $nested-key} {
+            #{$prop}: $nested-val;
+          }
+
+          .#{$label}\:#{"" + $key}\:#{"" + $nested-key}\! {
+            #{$prop}: $nested-val !important;
+          }
+        }
+      } @else {
+        .#{$label}\:#{"" + $key} { #{$prop}: $val; }
+        .#{$label}\:#{"" + $key}\! { #{$prop}: $val !important; }
+      }
+    }
+
+    /// create classes like `.color:error@sm` and `.color:success@xl!`.
+    @if $responsive {
+      @each $point, $pixels in $breaks {
+        @each $key, $val in $values {
+          @if meta.type-of($val) == map {
+            @each $nested-key, $nested-val in $val {
+              // e.g. `.color:violet\transparent@sm`
+              .#{$label}\:#{"" + $key}\:#{"" + $nested-key}\@#{$point} {
+                @media screen and (min-width: $pixels) {
+                  #{$prop}: $nested-val;
+                }
+              }
+              // e.g. `.color:indigo\vivid@md!`
+              .#{$label}\:#{"" + $key}\:#{"" + $nested-key}\@#{$point}\! {
+                @media screen and (min-width: $pixels) {
+                  #{$prop}: $nested-val !important;
+                }
+              }
+            }
+          } @else {
+            // e.g. `.color:blue@lg`
+            .#{$label}\:#{"" + $key}\@#{$point} {
+              @media screen and (min-width: $pixels) {
+                #{$prop}: $val;
+              }
+            }
+            // e.g. `.color:green@md!`
+            .#{$label}\:#{"" + $key}\@#{$point}\! {
+              @media screen and (min-width: $pixels) {
+                #{$prop}: $val !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

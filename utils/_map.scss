@@ -2,7 +2,23 @@
 @use 'sass:map';
 @use 'sass:meta';
 @use 'sass:string';
-@use './string' as str;
+@use 'string' as str;
+@use '../config';
+
+/* -------------------------------- *\
+   FILE INDEX
+\* -------------------------------- */
+
+/*
+ *  1. map-get-nth: return the value of a map item at a given index.
+ *  2. map-index: return the index in a map of a given item.
+ *  3. map-get-next: return the value of a map item that is the next key from the given key.
+ *  4. map-get-prev: return the value of a map item that is the previous key from the given key.
+ *  5. map-concat: return a string representation of a map.
+ *  6. map-set-keys: set multiple keys in a map to a common value.
+ *  7. map-set-many: similar to map-set-keys, but rather than giving a list of keys, you give a 'search term', and any key that matches will be set.
+ *
+ */
 
 /// MAP GET NTH
 /// ----------
@@ -29,8 +45,10 @@
   @return map.get($map, $target);
 }
 
-@debug "@function map-get-nth: #{map-get-nth((a: first, b: second), 2)}"; // expect 'second'
-@debug "----------";
+@if config.$debug {
+  @debug "@function map-get-nth: #{map-get-nth((a: first, b: second), 2)}"; // expect 'second'
+  @debug "----------";
+}
 
 /// MAP INDEX
 /// ----------
@@ -64,9 +82,11 @@
   @return $index;
 }
 
-@debug "@function map-index: #{map-index((a: first, b: second, c: third), b)}"; // expect 2
-@debug "@function map-index: #{map-index((a: first, b: second, c: third), third, $search: value)}"; // expect 3
-@debug "----------";
+@if config.$debug {
+  @debug "@function map-index: #{map-index((a: first, b: second, c: third), b)}"; // expect 2
+  @debug "@function map-index: #{map-index((a: first, b: second, c: third), third, $search: value)}"; // expect 3
+  @debug "----------";
+}
 
 /// MAP GET NEXT
 /// ----------
@@ -94,10 +114,12 @@
   @return map-get-nth($map, $target);
 }
 
-@debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), b)}"; // expect 'third'
-@debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), first, $search: value)}"; // expect 'second'
-@debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), c)}"; // expect 'first'
-@debug "----------";
+@if config.$debug {
+  @debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), b)}"; // expect 'third'
+  @debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), first, $search: value)}"; // expect 'second'
+  @debug "@function map-get-next: #{map-get-next((a: first, b: second, c: third), c)}"; // expect 'first'
+  @debug "----------";
+}
 
 /// MAP GET PREV
 @function map-get-prev($map, $current, $search: key) {
@@ -116,10 +138,12 @@
   @return map-get-nth($map, $target);
 }
 
-@debug "@function map-get-prev: #{map-get-prev((a: first, b: second), b)}"; // expect 'first'
-@debug "@function map-get-prev: #{map-get-prev((a: first, b: second), second, $search: value)}"; // expect 'first'
-@debug "@function map-get-prev: #{map-get-prev((a: first, b: second), a)}"; // expect 'second'
-@debug "----------";
+@if config.$debug {
+  @debug "@function map-get-prev: #{map-get-prev((a: first, b: second), b)}"; // expect 'first'
+  @debug "@function map-get-prev: #{map-get-prev((a: first, b: second), second, $search: value)}"; // expect 'first'
+  @debug "@function map-get-prev: #{map-get-prev((a: first, b: second), a)}"; // expect 'second'
+  @debug "----------";
+}
 
 /// MAP CONCAT
 /// ----------
@@ -155,11 +179,13 @@
   @return $result;
 }
 
-@debug "@function map-concat: #{map-concat((a: first, b: second))}"; // expect firstsecond
-@debug "@function map-concat: #{map-concat((a: first, b: second), $separator: '-')}"; // expect first-second
-@debug "@function map-concat: #{map-concat((a: first, b: second), $keys: true, $separator: ', ', $glue: '-')}"; // expect a-first, b-second
-@debug "@function map-concat: #{map-concat((transform: .2s linear, color: .25s ease-out), $keys: true, $separator: ', ', $glue: ' ')}"; // expect 'transform .2s linear, color .25s ease-out'
-@debug "----------";
+@if config.$debug {
+  @debug "@function map-concat: #{map-concat((a: first, b: second))}"; // expect firstsecond
+  @debug "@function map-concat: #{map-concat((a: first, b: second), $separator: '-')}"; // expect first-second
+  @debug "@function map-concat: #{map-concat((a: first, b: second), $keys: true, $separator: ', ', $glue: '-')}"; // expect a-first, b-second
+  @debug "@function map-concat: #{map-concat((transform: .2s linear, color: .25s ease-out), $keys: true, $separator: ', ', $glue: ' ')}"; // expect 'transform .2s linear, color .25s ease-out'
+  @debug "----------";
+}
 
 /// MAP SET KEYS
 /// ----------
@@ -199,8 +225,10 @@
 
 // @warn seems to be some sort of sass compiler bug here, if I try and interpolate this function value, it
 // throws an error.
-@debug map-set-keys((a: first, b: second, c: third), (a, c), test); // expect (a: test, b: second, c: test);
-@debug "----------";
+@if config.$debug {
+  @debug map-set-keys((a: first, b: second, c: third), (a, c), test); // expect (a: test, b: second, c: test);
+  @debug "----------";
+}
 
 /// MAP SET MANY
 /// ----------
@@ -230,5 +258,7 @@
   @return $result;
 }
 
-@debug map-set-many((border: false, background: false, border-width: false), border, true);
-@debug "----------";
+@if config.$debug {
+  @debug map-set-many((border: false, background: false, border-width: false), border, true);
+  @debug "----------";
+}

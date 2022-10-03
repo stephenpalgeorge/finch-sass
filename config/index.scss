@@ -1,0 +1,133 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+// show debug in the console?
+$debug: false !default;
+
+// config values are values that can be set on *any* css property.
+$global-values: (initial, inherit, unset, revert, revert-layer);
+
+// BREAKPOINTS
+// ----------
+$-finch-breakpoints: (
+  sm: $breakpoint\sm,
+  md: $breakpoint\md,
+  lg: $breakpoint\lg,
+  xl: $breakpoint\xl,
+);
+$breakpoints: () !default;
+$breaks: map.merge($-finch-breakpoints, $breakpoints);
+
+// SIZE SCALE
+// ----------
+$-finch-scales: (
+  minor-second: $scale\minor-second,
+  minor-second\detail: $scale\minor-second\detail,
+  major-second: $scale\major-second,
+  major-second\detail: $scale\major-second\detail,
+  minor-third: $scale\minor-third,
+  minor-third\detail: $scale\minor-third\detail,
+  major-third: $scale\major-third,
+  major-third\detail: $scale\major-third\detail,
+  perfect-fourth: $scale\perfect-fourth,
+  perfect-fourth\detail: $scale\perfect-fourth\detail,
+  augmented-fourth: $scale\augmented-fourth,
+  augmented-fourth\detail: $scale\augmented-fourth\detail,
+  perfect-fifth: $scale\perfect-fifth,
+  perfect-fifth\detail: $scale\perfect-fifth\detail,
+  aperys-constant: $scale\aperys-constant,
+  aperys-constant\detail: $scale\aperys-constant\detail,
+  golden-ratio: $scale\golden-ratio,
+  golden-ratio\detail: $scale\golden-ratio\detail,
+  theodorus-constant: $scale\theodorus-constant,
+  theodorus-constant\detail: $scale\theodorus-constant\detail,
+);
+$scales: () !default;
+$-modular-scales: map.merge($-finch-scales, $scales);
+
+$scale: major-third !default;
+$modular-scale: map.get($-modular-scales, $scale);
+$detail-scale: major-third\detail !default;
+$modular-scale\detail: map.get($-modular-scales, $detail-scale);
+
+
+// PROPERTY LABELS
+// ----------
+// These labels represent the text that will be used in a utility class for that
+// given property. So, for example, if utility classes are generated for the 'background-color'
+// property, the class name will be `.bg:red@md` etc.
+$-prop-labels: (
+  background-color: 'bg',
+  border-block-end-width: 'border-block-end-width',
+  border-block-start-width: 'border-block-start-width',
+  border-block-width: 'border-block-width',
+  border-bottom-left-radius: 'radius-bottom-left',
+  border-bottom-right-radius: 'radius-bottom-right',
+  border-bottom-width: 'border-bottom-width',
+  border-block-color: 'border-block-color',
+  border-block-end-color: 'border-block-end-color',
+  border-block-start-color: 'border-block-start-color',
+  border-bottom-color: 'border-bottom-color',
+  border-inline-color: 'border-inline-color',
+  border-inline-end-color: 'border-inline-end-color',
+  border-inline-start-color: 'border-inline-start-color',
+  border-left-color: 'border-left-color',
+  border-right-color: 'border-right-color',
+  border-top-color: 'border-top-color',
+  border-color: 'border-color',
+  border-inline-end-width: 'border-inline-end-width',
+  border-inline-start-width: 'border-inline-start-width',
+  border-inline-width: 'border-inline-width',
+  border-left-width: 'border-left-width',
+  border-right-width: 'border-right-width',
+  border-top-left-radius: 'radius-top-left',
+  border-top-right-radius: 'radius-top-right',
+  border-top-width: 'border-top-width',
+  border-radius: 'radius',
+  border-width: 'border-width',
+  caret-color: 'caret-color',
+  color: 'color',
+  column-rule-color: 'column-rule-color',
+  display: 'display',
+  position: 'pos',
+  font-family: 'family',
+  font-size: 'font-size',
+  font-weight: 'weight',
+  letter-spacing: 'letter-spacing',
+  line-height: 'line-height',
+  margin: 'margin',
+  margin-block: 'margin-block',
+  margin-block-end: 'margin-block-end',
+  margin-block-start: 'margin-block-start',
+  margin-bottom: 'margin-bottom',
+  margin-inline: 'margin-inline',
+  margin-inline-end: 'margin-inline-end',
+  margin-inline-start: 'margin-inline-start',
+  margin-left: 'margin-left',
+  margin-right: 'margin-right',
+  margin-top: 'margin-top',
+  outline-color: 'outline-color',
+  overflow: 'overflow',
+  overflow-x: 'overflow-x',
+  overflow-y: 'overflow-y',
+  padding: 'padding',
+  padding-block: 'padding-block',
+  padding-block-end: 'padding-block-end',
+  padding-block-start: 'padding-block-start',
+  padding-bottom: 'padding-bottom',
+  padding-inline: 'padding-inline',
+  padding-inline-end: 'padding-inline-end',
+  padding-inline-start: 'padding-inline-start',
+  padding-left: 'padding-left',
+  padding-right: 'padding-right',
+  padding-top: 'padding-top',
+  text-decoration-color: 'text-decoration-color',
+  text-emphasis-color: 'text-emphasis-color',
+  text-indent: 'indent',
+  text-transform: 'text-transform',
+  word-break: 'word-break',
+  word-spacing: 'word-spacing',
+  z-index: 'z',
+);
+$labels: () !default;
+$property-labels: map.merge($-prop-labels, $labels);
