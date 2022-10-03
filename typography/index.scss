@@ -7,22 +7,15 @@
 @forward 'functions';
 @forward 'variables';
 
-$-utility-defaults: (
-  font-size: false,
-  font-weight: false,
-  font-family: false,
-  line-height: false,
-  letter-spacing: false,
-  text-indent: false,
-  text-transform: false,
-  word-spacing: false,
-  word-break: false,
+$-utility-allowed: (
+  font-size, font-weight, font-family, line-height, letter-spacing, text-indent,
+  text-transform, word-spacing, word-break
 );
 
 $utils: () !default;
-$utilities: map.merge($-utility-defaults, $utils);
+//$utilities: map.merge($-utility-defaults, $utils);
 $responsive-utils: () !default;
-$responsive: map.merge($-utility-defaults, $responsive-utils);
+//$responsive: map.merge($-utility-defaults, $responsive-utils);
 
 
 $-finch-font-families: (
@@ -85,8 +78,14 @@ $-prop-values: (
   word-break: (normal, break-all, keep-all),
 );
 
-@each $prop, $flag in $utilities {
-  @if $flag or map.get($responsive, $prop) {
-    @include m.gen-utils($prop, map.get($-prop-values, $prop), $responsive: map.get($responsive, $prop));
+@each $prop in $utils {
+  @if list.index($-utility-allowed, $prop) {
+    @include m.gen-utils($prop, map.get($-prop-values, $prop));
+  }
+}
+
+@each $prop in $responsive-utils {
+  @if list.index($-utility-allowed, $prop) {
+    @include m.gen-utils($prop, map.get($-prop-values, $prop), $responsive: true);
   }
 }

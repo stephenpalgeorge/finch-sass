@@ -16,20 +16,14 @@
 @warn 'The sass RFC for color spaces will deprecate much of this module.';
 
 // module config
-$-utility-defaults: (
-  color: false,
-  background-color: false,
-  border-color: false, border-top-color: false, border-bottom-color: false, border-right-color: false,
-  border-left-color: false, border-block-color: false, border-block-start-color: false, border-block-end-color: false,
-  border-inline-color: false, border-inline-start-color: false, border-inline-end-color: false,
-  caret-color: false, text-decoration-color: false, text-emphasis-color: false, column-rule-color: false,
-  outline-color: false,
+$-utility-allowed: (
+  color, background-color, border-color, border-top-color, border-bottom-color, border-right-color, border-left-color,
+  border-block-color, border-block-start-color, border-block-end-color, border-inline-color, border-inline-start-color,
+  border-inline-end-color, caret-color, text-decoration-color, text-emphasis-color, column-rule-color, outline-color
 );
 
 $utils: () !default;
-$utilities: map.merge($-utility-defaults, $utils);
 $responsive-utils: () !default;
-$responsive: map.merge($-utility-defaults, $responsive-utils);
 
 // the default finch colours
 // @see './variables.scss' for colour and a11y information
@@ -308,8 +302,14 @@ $-shades-map: ();
 ///  *  UTILITIES
 /// \*  --------------------------------  */
 
-@each $prop, $flag in $utilities {
-  @if $flag or map.get($responsive, $prop) {
-    @include m.gen-utils($prop, $-palette, $responsive: map.get($responsive, $prop));
+@each $prop in $utils {
+  @if list.index($-utility-allowed, $prop) {
+    @include m.gen-utils($prop, $-palette);
+  }
+}
+
+@each $prop in $responsive-utils {
+  @if list.index($-utility-allowed, $prop) {
+    @include m.gen-utils($prop, $-palette, $responsive: true);
   }
 }

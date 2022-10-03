@@ -4,31 +4,29 @@
 @use '../config/mixins' as m;
 @use '../utils' as *;
 
-$-utility-defaults: (
+$-utility-allowed: (
   // margin properties
-  margin: false, margin-block: false, margin-inline: false, margin-block-start: false, margin-block-end: false, margin-inline-start: false,
-  margin-inline-end: false, margin-top: false, margin-right: false, margin-bottom: false, margin-left: false,
+  margin, margin-block, margin-inline, margin-block-start, margin-block-end, margin-inline-start,
+  margin-inline-end, margin-top, margin-right, margin-bottom, margin-left,
   // padding properties
-  padding: false, padding-block: false, padding-inline: false, padding-block-start: false, padding-blocke-end: false,
-  padding-inline-start: false, padding-inline-end: false, padding-top: false, padding-right: false, padding-bottom: false, padding-left: false,
+  padding, padding-block, padding-inline, padding-block-start, padding-blocke-end,
+  padding-inline-start, padding-inline-end, padding-top, padding-right, padding-bottom, padding-left,
   // overflow properties
-  overflow: false, overflow-x: false, overflow-y: false,
+  overflow, overflow-x, overflow-y,
   // border properties
-  border-width: false, border-block-width: false, border-inline-width: false, border-block-start-width: false, border-block-end-width: false,
-  border-inline-start-width: false, border-inline-end-width: false, border-top-width: false, border-right-width: false,
-  border-bottom-width: false, border-left-width: false,
-  border-radius: false, border-top-right-radius: false, border-bottom-right-radius: false, border-bottom-left-radius: false,
-  border-top-left-radius: false,
+  border-width, border-block-width, border-inline-width, border-block-start-width, border-block-end-width,
+  border-inline-start-width, border-inline-end-width, border-top-width, border-right-width,
+  border-bottom-width, border-left-width,
+  border-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius,
+  border-top-left-radius,
   // others
-  display: false,
-  position: false,
-  z-index: false,
+  display, position, z-index
 );
 
 $utils: () !default;
-$utilities: map.merge($-utility-defaults, $utils);
+//$utilities: map.merge($-utility-defaults, $utils);
 $responsive-utils: () !default;
-$responsive: map.merge($-utility-defaults, $responsive-utils);
+//$responsive: map.merge($-utility-defaults, $responsive-utils);
 
 $-finch-keywords: (
   xs: map.get(config.$modular-scale, 100),
@@ -74,20 +72,30 @@ $-border-width-values: map.merge(config.$modular-scale\detail, (thin: thin, medi
 $-border-radius-values: map.merge(config.$modular-scale\detail, (none: 0, max: 100vw));
 $-overflow-values: (visible, hidden, clip, scroll, auto);
 
+$-prop-values: ();
 $-prop-values: (
   overflow: $-overflow-values, overflow-x: $-overflow-values, overflow-y: $-overflow-values,
   display: (block, inline, inline-block, flex, inline-flex, grid, inline-grid, flow-root, none, contents, table, table-row, list-item),
   position: (static, relative, absolute, fixed, sticky),
   z-index: (auto),
 );
+@each $prop in $-utility-allowed {
+  $-prop-values: map.set($-prop-values, $prop, null);
+}
 
-$-prop-values: map-set-many($-utility-defaults, width, $-border-width-values);
+$-prop-values: map-set-many($-prop-values, width, $-border-width-values);
 $-prop-values: map-set-many($-prop-values, radius, $-border-radius-values);
 $-prop-values: map-set-many($-prop-values, padding, map.merge(config.$modular-scale, $-presets));
 $-prop-values: map-set-many($-prop-values, margin, map.merge(config.$modular-scale, $-presets));
 
-@each $prop, $flag in $utilities {
-  @if $flag or map.get($responsive, $prop) {
-    @include m.gen-utils($prop, map.get($-prop-values, $prop), $responsive: map.get($responsive, $prop));
+@each $prop in $utils {
+  @if list.index($-utility-allowed, $prop) {
+    @include m.gen-utils($prop, map.get($-prop-values, $prop));
+  }
+}
+
+@each $prop in $responsive-utils {
+  @if list.index($-utility-allowed, $prop) {
+    @include m.gen-utils($prop, map.get($-prop-values, $prop), $responsive: true);
   }
 }
