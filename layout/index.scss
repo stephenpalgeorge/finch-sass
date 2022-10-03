@@ -24,9 +24,8 @@ $-utility-allowed: (
 );
 
 $utils: () !default;
-//$utilities: map.merge($-utility-defaults, $utils);
 $responsive-utils: () !default;
-//$responsive: map.merge($-utility-defaults, $responsive-utils);
+$layout-utils: () !default;
 
 $-finch-keywords: (
   xs: map.get(config.$modular-scale, 100),
@@ -39,7 +38,7 @@ $keywords: () !default;
 $-presets: map.merge($-finch-keywords, $keywords);
 $-all-sizes: map.merge(config.$modular-scale, $-presets);
 
-@forward './mixins' with ($all-sizes: $-all-sizes);
+@forward './mixins' with ($all-sizes: $-all-sizes, $utils: $layout-utils);
 
 /// USE FUNCTION
 /// ----------

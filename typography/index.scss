@@ -13,10 +13,7 @@ $-utility-allowed: (
 );
 
 $utils: () !default;
-//$utilities: map.merge($-utility-defaults, $utils);
 $responsive-utils: () !default;
-//$responsive: map.merge($-utility-defaults, $responsive-utils);
-
 
 $-finch-font-families: (
   sans-serif: $family\sans-serif,

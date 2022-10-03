@@ -4,6 +4,7 @@
 @use '../color' as clr;
 
 $all-sizes: () !default;
+$utils: () !default;
 
 /// BOX RESET
 /// ----------
@@ -26,7 +27,9 @@ $all-sizes: () !default;
 }
 
 // box-reset utility class
-.box-reset { @include box-reset; }
+@if list.index($utils, box-reset) {
+  .box-reset { @include box-reset; }
+}
 
 /// PADDING X
 /// ----------
@@ -86,6 +89,24 @@ $all-sizes: () !default;
   }
 }
 
+@if list.index($utils, padding) {
+  @each $size in map.keys($all-sizes) {
+    // `.padding-x:100`, `.padding-x:lg` etc.
+    .padding-x\:#{$size} { @include padding-x($size); }
+    // `.padding-y:900`, `.padding-y:sm` etc.
+    .padding-y\:#{$size} { @include padding-y($size); }
+  }
+}
+
+@if list.index($utils, margin) {
+  @each $size in map.keys($all-sizes) {
+    // `.margin-x:200`, `.margin-x:md` etc.
+    .margin-x\:#{$size} { @include margin-x($size); }
+    // `.margin-y:700`, `margin-y:xl` etc.
+    .margin-y\:#{$size} { @include margin-y($size); }
+  }
+}
+
 @mixin border($sides: (top, right, bottom, left), $color, $width: 400, $style: solid) {
   $border-value: #{map.get(config.$modular-scale\detail, $width)} #{$style} #{clr.use($color)};
 
@@ -111,16 +132,6 @@ $all-sizes: () !default;
   }
 }
 
-@each $size in map.keys($all-sizes) {
-  // `.padding-x:100`, `.padding-x:lg` etc.
-  .padding-x\:#{$size} { @include padding-x($size); }
-  // `.padding-y:900`, `.padding-y:sm` etc.
-  .padding-y\:#{$size} { @include padding-y($size); }
-  // `.margin-x:200`, `.margin-x:md` etc.
-  .margin-x\:#{$size} { @include margin-x($size); }
-  // `.margin-y:700`, `margin-y:xl` etc.
-  .margin-y\:#{$size} { @include margin-y($size); }
-}
 
 @mixin flex-axis($dir: row, $x: initial, $y: initial) {
   // assume the default "row"
@@ -168,16 +179,18 @@ $all-sizes: () !default;
   }
 }
 
-@each $size in map.keys($all-sizes) {
-  // `.box:sm`, `.box:lg`, `.box:300` etc.
-  .box\:#{$size} {
-    @include box($pad-x: $size, $pad-y: $size);
-  }
+@if list.index($utils, box) {
+  @each $size in map.keys($all-sizes) {
+    // `.box:sm`, `.box:lg`, `.box:300` etc.
+    .box\:#{$size} {
+      @include box($pad-x: $size, $pad-y: $size);
+    }
 
-  // `.box:x-sm/y-md`, `.box:x-lg/y-xl`, `.box:x-200/y-300` etc.
-  @each $nested-size in map.keys($all-sizes) {
-    .box\:x-#{$size}\/y-#{$nested-size} {
-      @include box($pad-x: $size, $pad-y: $nested-size);
+    // `.box:x-sm/y-md`, `.box:x-lg/y-xl`, `.box:x-200/y-300` etc.
+    @each $nested-size in map.keys($all-sizes) {
+      .box\:x-#{$size}\/y-#{$nested-size} {
+        @include box($pad-x: $size, $pad-y: $nested-size);
+      }
     }
   }
 }
@@ -200,16 +213,18 @@ $all-sizes: () !default;
   }
 }
 
-@each $size in map.keys($all-sizes) {
-  // `.pillar:lg`, `.pillar:xs`, `.pillar:300` etc
-  .pillar\:#{$size} {
-    @include pillar($max: null, $pad-x: $size, $pad-y: $size);
-  }
+@if list.index($utils, pillar) {
+  @each $size in map.keys($all-sizes) {
+    // `.pillar:lg`, `.pillar:xs`, `.pillar:300` etc
+    .pillar\:#{$size} {
+      @include pillar($max: null, $pad-x: $size, $pad-y: $size);
+    }
 
-  // `.pillar:x-lg/y-md`, `.pillar:x-500/y-900` etc
-  @each $nested-size in map.keys($all-sizes) {
-    .pillar\:x-#{$size}\/y-#{$nested-size} {
-      @include pillar($max: null, $pad-x: $size, $pad-y: $nested-size);
+    // `.pillar:x-lg/y-md`, `.pillar:x-500/y-900` etc
+    @each $nested-size in map.keys($all-sizes) {
+      .pillar\:x-#{$size}\/y-#{$nested-size} {
+        @include pillar($max: null, $pad-x: $size, $pad-y: $nested-size);
+      }
     }
   }
 }
@@ -229,16 +244,18 @@ $all-sizes: () !default;
   > * + * { margin-top: $stack-gap; }
 }
 
-@each $size in map.keys($all-sizes) {
-  // `.stack:md`, `.stack:500` etc
-  .stack\:#{$size} {
-    @include stack($flow: $size);
-  }
+@if list.index($utils, stack) {
+  @each $size in map.keys($all-sizes) {
+    // `.stack:md`, `.stack:500` etc
+    .stack\:#{$size} {
+      @include stack($flow: $size);
+    }
 
-  @each $nested-size in map.keys($all-sizes) {
-    // `.stack:md>sm`, `.stack:xl>lg`, `.stack:700>400` etc
-    .stack\:#{$size}\>#{$nested-size} {
-      @include stack($flow: $size, $nested-flow: $nested-size);
+    @each $nested-size in map.keys($all-sizes) {
+      // `.stack:md>sm`, `.stack:xl>lg`, `.stack:700>400` etc
+      .stack\:#{$size}\>#{$nested-size} {
+        @include stack($flow: $size, $nested-flow: $nested-size);
+      }
     }
   }
 }
