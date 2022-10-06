@@ -35,6 +35,10 @@ $utils: () !default;
 /// ----------
 /// The `padding-x` mixin sets padding on the x-axis using logical properties if
 /// they're supported, and falling back to 'left' and 'right' if not.
+/// @see https://caniuse.com/?search=padding-inline
+/// @param $size {Number|String} either a modular size (100, 200...900, 1000) or a preset (sm, md...)
+///
+/// @example @include padding-x(lg);
 @mixin padding-x($size) {
   $value: map.get($all-sizes, $size);
   @if list.index(config.$global-values, $size) {
@@ -48,6 +52,14 @@ $utils: () !default;
   }
 }
 
+/// PADDING Y
+/// ----------
+/// The `padding-y` mixin sets padding on the y-axis using logical properties if
+/// they're supported, and falling back to 'top' and 'bottom' if not.
+/// @see https://caniuse.com/?search=padding-block
+/// @param $size {Number|String} either a modular size (100, 200...900, 1000) or a preset (sm, md...)
+///
+/// @example @include padding-y(500);
 @mixin padding-y($size) {
   $value: map.get($all-sizes, $size);
   @if list.index(config.$global-values, $size) {
@@ -61,6 +73,14 @@ $utils: () !default;
   }
 }
 
+/// MARGIN X
+/// -----------
+/// The `margin-x` mixin sets margin on the x-axis using logical properties if
+/// they're supported, and falling back to 'left' and 'right' if not.
+/// @see https://caniuse.com/?search=margin-inline
+/// @param $size {Number|String} either a modular size (100, 200...900, 1000) or a preset (sm, md...)
+///
+/// @example @include margin-x(800);
 @mixin margin-x($size) {
   $value: map.get($all-sizes, $size);
   $keywords: list.join(config.$global-values, (auto));
@@ -75,6 +95,14 @@ $utils: () !default;
   }
 }
 
+/// MARGIN Y
+/// ----------
+/// The `margin-y` mixin sets margin on the y-axis using logical properties if
+/// they're supported, and falling back to 'top' and 'bottom' if not.
+/// @see https://caniuse.com/?search=margin-block
+/// @param $size {Number|String} either a modular size (100, 200...900, 1000) or a preset (sm, md...)
+///
+/// @example @include margin-y(md);
 @mixin margin-y($size) {
   $value: map.get($all-sizes, $size);
   $keywords: list.join(config.$global-values, (auto));
@@ -89,6 +117,7 @@ $utils: () !default;
   }
 }
 
+/// UTILITY CLASSES FOR 'PADDING-X', 'PADDING-Y', 'MARGIN-X' AND 'MARGIN-Y'
 @if list.index($utils, padding) {
   @each $size in map.keys($all-sizes) {
     // `.padding-x:100`, `.padding-x:lg` etc.
@@ -107,6 +136,16 @@ $utils: () !default;
   }
 }
 
+/// BORDER
+/// ----------
+/// The `border` mixin provides a simple API for setting a border on specified sides of
+/// an element.Obviously, if the border should be applied to all sides, then it is simpler
+/// to just use the native CSS `border` shorthand property.
+/// @param $sides {List} a list of sides to which the border should be applied. Any values other than
+/// 'top', 'right', 'bottom' and 'left' will produce invalid CSS.
+/// @param $color {Color} the border color
+/// @param $width {Number} a modular key (100, 200...900, 1000) which will take a size from the 'details' scale
+/// @param $style {String} a valid value for the 'border-style' CSS property
 @mixin border($sides: (top, right, bottom, left), $color, $width: 400, $style: solid) {
   $border-value: #{map.get(config.$modular-scale\detail, $width)} #{$style} #{clr.use($color)};
 
@@ -116,6 +155,14 @@ $utils: () !default;
   }
 }
 
+/// BORDER-X
+/// ----------
+/// The `border-x` mixin is a shorthand utility mixin for setting a border on the x-axis, using logical properties if
+/// supported and falling back to 'left' and 'right' if not.
+/// @see https://caniuse.com/?search=border-inline
+/// @param $color {Color} the border-color
+/// @param $width {Number} a modular key (100, 200...900, 1000) which will take a size from the 'details' scale
+/// @param $style {String} a valid value for the 'border-style' CSS property
 @mixin border-x($color, $width: 400, $style) {
   $border-value: #{map.get(config.$modular-scale\detail, $width)} #{$style} #{clr.use($color)};
   @supports (border-inline: 1px solid black) { border-inline: $border-value; }
@@ -124,6 +171,14 @@ $utils: () !default;
   }
 }
 
+/// BORDER-Y
+/// ----------
+/// The `border-y` mixin is a shorthand utility mixin for setting a border on the y-axis, using logical properties if
+/// supported and falling back to 'top' and 'bottom' if not.
+/// @see https://caniuse.com/?search=border-block
+/// @param $color {Color} the border-color
+/// @param $width {Number} a modular key (100, 200...900, 1000) which will take a size from the 'details' scale
+/// @param $style {String} a valid value for the 'border-style' CSS property
 @mixin border-y($color, $width: 400, $style) {
   $border-value: #{map.get(config.$modular-scale\detail, $width)} #{$style} #{clr.use($color)};
   @supports (border-block: 1px solid black) { border-block: $border-value; }
@@ -132,7 +187,13 @@ $utils: () !default;
   }
 }
 
-
+/// FLEX-AXIS
+/// ----------
+/// The `flex-axis` mixin is a layout utility that provides a simple API for setting flex properties
+/// by axis, since the justify-content and align-items properties affect different axis depending on the flex-direction.
+/// @param $dir {row|column} a valid value for the 'flex-direction' CSS property
+/// @param $x {String} a valid value for the 'justify-content' or 'align-items' CSS properties
+/// @param $y {String} a valid value for the 'justify-content' or 'align-items' CSS properties
 @mixin flex-axis($dir: row, $x: initial, $y: initial) {
   // assume the default "row"
   $x-axis: justify-content;
@@ -151,18 +212,24 @@ $utils: () !default;
 
 /// LAYOUT PRIMITIVES
 /// ----------
+/// "Layout primitives" are basic CSS layouts that can be composed to form the essential building-blocks of
+/// any UI.
 
 /// BOX
+/// ----------
+/// The `box` mixin sets some basic CSS properties to create a simple box layout
+/// @param $pad-x {Number} a key from the modular-scale map that will be applied to the left and right padding
+/// @param $pad-y {Number} as pad-x, but if set to null, the value of $pad-x will be used so a consistent padding
+/// is applied to all sides.
+/// @param $reset {Boolean} whether or not to include the 'box-reset' mixin in this code
+///
 /// @example ```scss
 ///   @use 'finch/layout' as lyt;
 ///   @use 'finch/color' as clr;
 ///
 ///   .container {
 ///     @include lyt.box(lg);
-///     background-color: clr.use(dark);
-///     color: clr.use(light);
-///     @todo - we should eventually be able to replace the above 2 lines with:
-///     ** @include clr.theme(dark, light, accent); **
+///     @include clr.theme(dark, light, blue);
 ///   }
 /// ```
 @mixin box($pad-x: md, $pad-y: null, $reset: false) {
@@ -179,6 +246,7 @@ $utils: () !default;
   }
 }
 
+/// UTILITY CLASSES FOR THE `BOX` MIXIN
 @if list.index($utils, box) {
   @each $size in map.keys($all-sizes) {
     // `.box:sm`, `.box:lg`, `.box:300` etc.
@@ -196,6 +264,24 @@ $utils: () !default;
 }
 
 /// PILLAR
+/// ----------
+/// The `pillar` mixin creates a column of content that will be horizontally centered and include a specified
+/// amount of padding. The contents of the pillar can also be centered on the x-axis by setting the `$center-contents`
+/// param to 'true'.
+/// @param $max {Length} sets the maximum width of the pillar. When the screen is smaller that the max, it will default
+/// to 100% of its container.
+/// @param $pad-x {Number} a key from the modular scale map, which represents the amount of padding to be applied to the
+/// x-axis.
+/// @param $pad-y {Number|Null} if null, the $pad-x value will be used, otherwise a key from the modular scale map, which
+/// represents the amount of padding to be applied to the y-axis.
+/// @param $center-contents {Boolean} whether or not the pillar's contents should also be horizontally centred.
+///
+/// @example ```scss
+///   @use 'finch/layout' as lyt;
+///   main {
+///     @include lyt.pillar($max: 45rem, $pad-x: 500, $pad-y: 800, $center-contents: true);
+///   }
+/// ```
 @mixin pillar($max: null, $pad-x: md, $pad-y: null, $center-contents: false) {
   margin-inline: auto;
   @if not $pad-y {
@@ -213,6 +299,7 @@ $utils: () !default;
   }
 }
 
+/// UTILITY CLASSES FOR THE `PILLAR` MIXIN
 @if list.index($utils, pillar) {
   @each $size in map.keys($all-sizes) {
     // `.pillar:lg`, `.pillar:xs`, `.pillar:300` etc
@@ -230,9 +317,19 @@ $utils: () !default;
 }
 
 /// STACK
+/// ----------
+/// The `stack` mixin creates a vertical stack of content from the container's direct children. Firstly, all direct
+/// children are given a display of 'block' to ensure that they stack vertically, rather than sitting 'inline' with
+/// anything else, and then a margin is applied to the top of all but the first of the children.
+/// Optionally, a nested margin can be applied to children within children etc.
+/// @param $flow {Number|String} either a modular scale key (100, 200...900, 1000) or a preset (sm, md...)
+/// @param $nested-flow {Number|String} see `$flow`
 @mixin stack($flow: lg, $nested-flow: null) {
+  > * {
+    display: block;
+  }
+
   $stack-gap: map.get($all-sizes, $flow);
-  $nested-stack-gap: $stack-gap;
   @if $nested-flow {
     // give everything that follows anything the 'nested' flow
     // to begin with.
@@ -244,6 +341,7 @@ $utils: () !default;
   > * + * { margin-top: $stack-gap; }
 }
 
+/// UTILITY CLASSES FOR THE `STACK` MIXIN
 @if list.index($utils, stack) {
   @each $size in map.keys($all-sizes) {
     // `.stack:md`, `.stack:500` etc
@@ -259,3 +357,5 @@ $utils: () !default;
     }
   }
 }
+
+// @todo responsive grid mixin

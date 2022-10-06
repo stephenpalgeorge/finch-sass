@@ -4,6 +4,15 @@
 
 /// GENERATE UTILITY CLASSES
 /// ----------
+/// This is a monster, but it represents the entire utility-class generation engine for Finch. Essentially, it receives
+/// a 'prop' (e.g. color, font-size etc.) and some values (e.g. (red, blue, green) or (large: 4rem, medium: 3rem,
+/// small: 2rem) etc.) and generates utility classes that apply each value to the property.
+/// The mixin can also be signalled as 'responsive', in which case the utility classes will also include a class
+/// for each breakpoint.
+///
+/// The complexity comes from the intended, and desired, flexibility of this mixin. `$values` could be a list, or a
+/// map and, when a map, the values of each map key could themselves be a map (the mixin only supports 2 levels of
+/// nesting), but we have to account for all of these scenarios.
 ///
 @mixin gen-utils($prop, $values, $responsive: false) {
   $label: map.get($property-labels, $prop);
@@ -35,12 +44,11 @@
     }
   } @else if meta.type-of($values) == map {
     /// more likely, $values is a map, e.g. `gen-utils('color', (red: #ff0000, blue: #0000ff))`.
-    /// create classes like `.color:red` and `.background-color:blue!`
     @each $key, $val in $values {
       @if meta.type-of($val) == map {
         @each $nested-key, $nested-val in $val {
           /// $values could contain nested maps, we only support 2 deep, but
-          /// this should create class names for colors like: `.color:red\100` or `.color.blue\dark`
+          /// this should create class names for colors like: `.color:red:100` or `.color:blue:dark`
           .#{$label}\:#{"" + $key}\:#{"" + $nested-key} {
             #{$prop}: $nested-val;
           }

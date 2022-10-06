@@ -1,6 +1,17 @@
 @use 'sass:map';
 @use '../config';
 
+/// GEN-FONT
+/// ----------
+/// The `gen-font` function constructs a string to be used as the value of the CSS shorthand property 'font'.
+/// @param $family {String} the font-family that is to be used
+/// @param $size {Number|String} either a modular scale key (100, 200...900, 1000) or a keyword (sm, md...)
+/// @param $line-height {Number|String} see `$size`
+/// @param $style {String} a valid value for the CSS 'font-style' property
+/// @param $variant {String} a valid value for the CSS 'font-variant' property
+/// @param $weight {String} a valid value for the CSS 'font-weight' property
+///
+/// @example gen-font(Georgia, 800, 900, $weight: bold) // normal normal bold 2.441rem / 3.052rem
 @function gen-font($family, $size, $line-height, $style: normal, $variant: normal, $weight: normal) {
   $font-size: map.get(config.$modular-scale, $size);
   $line: map.get(config.$modular-scale, $line-height);

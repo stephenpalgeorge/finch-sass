@@ -7,7 +7,7 @@
 // pairs with:
 //  - white, AAA.
 //  - finch-light, AA.
-$finch-red: hsl(351, 98%, 35%) !default;
+$finch-red: hsl(351, 98%, 35%);
 
 
 // FINCH BLUE
@@ -17,7 +17,7 @@ $finch-red: hsl(351, 98%, 35%) !default;
 // pairs with:
 //  - black, AAA.
 //  - finch-dark, AA.
-$finch-blue: hsl(202, 82%, 58%) !default;
+$finch-blue: hsl(202, 82%, 58%);
 
 
 // FINCH GREEN
@@ -27,7 +27,7 @@ $finch-blue: hsl(202, 82%, 58%) !default;
 // pairs with:
 //  - white, AAA.
 //  - finch-light, AA.
-$finch-green: hsl(88, 48%, 25%) !default;
+$finch-green: hsl(88, 48%, 25%);
 
 // FINCH YELLOW
 // ----------
@@ -37,7 +37,7 @@ $finch-green: hsl(88, 48%, 25%) !default;
 //  - black, AAA.
 //  - finch-dark, AAA.
 //  - finch-purple, AA.
-$finch-yellow: hsl(45, 93%, 56%) !default;
+$finch-yellow: hsl(45, 93%, 56%);
 
 // FINCH PINK
 // ----------
@@ -46,7 +46,7 @@ $finch-yellow: hsl(45, 93%, 56%) !default;
 // pairs with:
 //  - black, AAA.
 //  - finch-dark, AA.
-$finch-pink: hsl(328, 64%, 66%) !default;
+$finch-pink: hsl(328, 64%, 66%);
 
 // FINCH PURPLE
 // ----------
@@ -56,7 +56,7 @@ $finch-pink: hsl(328, 64%, 66%) !default;
 //  - white, AAA.
 //  - finch-light, AAA.
 //  - finch-yellow, AA.
-$finch-purple: hsl(279, 82%, 41%) !default;
+$finch-purple: hsl(279, 82%, 41%);
 
 // FINCH ORANGE
 // ----------
@@ -65,7 +65,7 @@ $finch-purple: hsl(279, 82%, 41%) !default;
 // pairs with:
 //  - black, AAA.
 //  - finch-dark, AA.
-$finch-orange: hsl(22, 100%, 53%) !default;
+$finch-orange: hsl(22, 100%, 53%);
 
 // FINCH INDIGO
 // ----------
@@ -74,7 +74,7 @@ $finch-orange: hsl(22, 100%, 53%) !default;
 // pairs with:
 //  - black, AAA.
 //  - finch-dark, AA.
-$finch-indigo: hsl(231, 57%, 70%) !default;
+$finch-indigo: hsl(231, 57%, 70%);
 
 // FINCH VIOLET
 // ----------
@@ -83,7 +83,7 @@ $finch-indigo: hsl(231, 57%, 70%) !default;
 // pairs with:
 //  - white, AAA.
 //  - finch-light, AA.
-$finch-violet: hsl(270, 100%, 46%) !default;
+$finch-violet: hsl(270, 100%, 46%);
 
 // FINCH LIGHT
 // ----------
@@ -96,7 +96,23 @@ $finch-violet: hsl(270, 100%, 46%) !default;
 //  - finch-red, AA.
 //  - finch-green, AA.
 //  - finch-violet, AA.
-$finch-light: hsl(285, 50%, 98%) !default;
+$finch-light: hsl(285, 50%, 98%);
+
+// FINCH LIGHT GREY
+// ----------
+// #EFEFEF, rgb(239, 239, 239)
+//
+// pairs with:
+// @todo
+$finch-light-grey: hsl(0, 0%, 94%);
+
+// FINCH DARK GREY
+// ----------
+// #BEBEBE, rgb(190, 190, 190)
+//
+// pairs with:
+// @todo
+$finch-dark-grey: hsl(0, 0%, 75%);
 
 // FINCH DARK
 // ----------
@@ -110,4 +126,4 @@ $finch-light: hsl(285, 50%, 98%) !default;
 //  - finch-pink, AA.
 //  - finch-orange, AA.
 //  - finch-indigo, AA.
-$finch-dark: hsl(0, 0%, 13%) !default;
+$finch-dark: hsl(0, 0%, 13%);

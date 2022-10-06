@@ -1,5 +1,5 @@
 @use 'sass:map';
-@use 'variables' as *;
+@use 'variables' as vars;
 
 // show debug in the console?
 $debug: false !default;
@@ -10,10 +10,10 @@ $global-values: (initial, inherit, unset, revert, revert-layer);
 // BREAKPOINTS
 // ----------
 $-finch-breakpoints: (
-  sm: $breakpoint\sm,
-  md: $breakpoint\md,
-  lg: $breakpoint\lg,
-  xl: $breakpoint\xl,
+  sm: vars.$breakpoint\sm,
+  md: vars.$breakpoint\md,
+  lg: vars.$breakpoint\lg,
+  xl: vars.$breakpoint\xl,
 );
 $breakpoints: () !default;
 $breaks: map.merge($-finch-breakpoints, $breakpoints);
@@ -21,26 +21,26 @@ $breaks: map.merge($-finch-breakpoints, $breakpoints);
 // SIZE SCALE
 // ----------
 $-finch-scales: (
-  minor-second: $scale\minor-second,
-  minor-second\detail: $scale\minor-second\detail,
-  major-second: $scale\major-second,
-  major-second\detail: $scale\major-second\detail,
-  minor-third: $scale\minor-third,
-  minor-third\detail: $scale\minor-third\detail,
-  major-third: $scale\major-third,
-  major-third\detail: $scale\major-third\detail,
-  perfect-fourth: $scale\perfect-fourth,
-  perfect-fourth\detail: $scale\perfect-fourth\detail,
-  augmented-fourth: $scale\augmented-fourth,
-  augmented-fourth\detail: $scale\augmented-fourth\detail,
-  perfect-fifth: $scale\perfect-fifth,
-  perfect-fifth\detail: $scale\perfect-fifth\detail,
-  aperys-constant: $scale\aperys-constant,
-  aperys-constant\detail: $scale\aperys-constant\detail,
-  golden-ratio: $scale\golden-ratio,
-  golden-ratio\detail: $scale\golden-ratio\detail,
-  theodorus-constant: $scale\theodorus-constant,
-  theodorus-constant\detail: $scale\theodorus-constant\detail,
+  minor-second: vars.$scale\minor-second,
+  minor-second\detail: vars.$scale\minor-second\detail,
+  major-second: vars.$scale\major-second,
+  major-second\detail: vars.$scale\major-second\detail,
+  minor-third: vars.$scale\minor-third,
+  minor-third\detail: vars.$scale\minor-third\detail,
+  major-third: vars.$scale\major-third,
+  major-third\detail: vars.$scale\major-third\detail,
+  perfect-fourth: vars.$scale\perfect-fourth,
+  perfect-fourth\detail: vars.$scale\perfect-fourth\detail,
+  augmented-fourth: vars.$scale\augmented-fourth,
+  augmented-fourth\detail: vars.$scale\augmented-fourth\detail,
+  perfect-fifth: vars.$scale\perfect-fifth,
+  perfect-fifth\detail: vars.$scale\perfect-fifth\detail,
+  aperys-constant: vars.$scale\aperys-constant,
+  aperys-constant\detail: vars.$scale\aperys-constant\detail,
+  golden-ratio: vars.$scale\golden-ratio,
+  golden-ratio\detail: vars.$scale\golden-ratio\detail,
+  theodorus-constant: vars.$scale\theodorus-constant,
+  theodorus-constant\detail: vars.$scale\theodorus-constant\detail,
 );
 $scales: () !default;
 $-modular-scales: map.merge($-finch-scales, $scales);

@@ -3,6 +3,17 @@
 @use 'sass:math';
 @use './list' as *;
 
+/* -------------------------------- *\
+   FILE INDEX
+\* -------------------------------- */
+
+/*
+ *  1. to-radix: convert a decimal number to a different base.
+ *  2. mod: an implementation of the modulo operator that returns both the quotient, and the remainder.
+ *
+ */
+
+/// [ 1 ]
 /// TO RADIX
 /// ----------
 /// Converts a decimal (base 10) number to its equivalent in another base.
@@ -29,6 +40,7 @@
   @return $digits;
 }
 
+/// [ 2 ]
 /// MOD
 /// ----------
 /// An implementation of the 'modulo' operator that returns both the quotient and remainder.

@@ -2,7 +2,7 @@
 @use 'sass:map';
 @use '../config';
 @use '../config/mixins' as m;
-@use 'variables' as *;
+@use 'variables' as vars;
 
 @forward 'functions';
 @forward 'variables';
@@ -16,23 +16,23 @@ $utils: () !default;
 $responsive-utils: () !default;
 
 $-finch-font-families: (
-  sans-serif: $family\sans-serif,
-  serif: $family\serif,
-  cursive: $family\cursive,
-  monospace: $family\monospace,
+  sans-serif: vars.$family\sans-serif,
+  serif: vars.$family\serif,
+  cursive: vars.$family\cursive,
+  monospace: vars.$family\monospace,
 );
 $font-families: () !default;
 $-families: map.merge($-finch-font-families, $font-families);
 
 $-finch-fonts: (
-  body: $font\body,
-  titles: $font\titles,
-  lead: $font\lead,
-  emphasis: $font\emphasis,
-  bold: $font\bold,
-  links: $font\links,
-  code: $font\code,
-  handwriting: $font\handwriting,
+  body: vars.$font\body,
+  titles: vars.$font\titles,
+  lead: vars.$font\lead,
+  emphasis: vars.$font\emphasis,
+  bold: vars.$font\bold,
+  links: vars.$font\links,
+  code: vars.$font\code,
+  handwriting: vars.$font\handwriting,
 );
 $fonts: () !default;
 $-font-declarations: map.merge($-finch-fonts, $fonts);
@@ -60,8 +60,6 @@ $-font-declarations: map.merge($-finch-fonts, $fonts);
 ///  *  UTILITY CLASSES
 /// \*  --------------------------------  */
 ///
-/// The prop-values map provides a lookup for the values that should be used for each
-/// typography property when iterating to create utility classes.
 $-prop-values: (
   font-size: config.$modular-scale,
   font-weight: (normal, bold, bolder, lighter, 100, 200, 300, 400, 500, 600, 700, 800, 900),

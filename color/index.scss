@@ -16,12 +16,16 @@
 @warn 'The sass RFC for color spaces will deprecate much of this module.';
 
 // module config
+// only properties that are in this list will be allowed as properties for utility-class generation
+// in this module
 $-utility-allowed: (
   color, background-color, border-color, border-top-color, border-bottom-color, border-right-color, border-left-color,
   border-block-color, border-block-start-color, border-block-end-color, border-inline-color, border-inline-start-color,
   border-inline-end-color, caret-color, text-decoration-color, text-emphasis-color, column-rule-color, outline-color
 );
-
+// user can supply their own lists of properties for which they want utility classes to be created
+// `$utils` will create simple utility classes, whereas `$responsive-utils` will create utility classes
+// for each breakpoint that has been configured
 $utils: () !default;
 $responsive-utils: () !default;
 
@@ -38,8 +42,24 @@ $-finch-colors: (
   indigo: $finch-indigo,
   violet: $finch-violet,
   light: $finch-light,
+  light-grey: $finch-light-grey,
+  light-gray: $finch-light-grey,
+  dark-grey: $finch-dark-grey,
+  dark-gray: $finch-dark-grey,
   dark: $finch-dark,
 );
+
+$-finch-context-colors: (
+  error: map.get($-finch-colors, red),
+  invalid: map.get($-finch-colors, red),
+  warning: map.get($-finch-colors, yellow),
+  info: map.get($-finch-colors, blue),
+  success: map.get($-finch-colors, green),
+  valid: map.get($-finch-colors, green),
+  disabled: map.get($-finch-colors, dark-grey),
+);
+
+$-all-finch-colors: map.merge($-finch-colors, $-finch-context-colors);
 
 // this empty map is a placeholder, intended for the user to
 // pass in a map of their own brand colours.
@@ -47,31 +67,30 @@ $colors: () !default;
 // merging the two maps, with the user-provided map coming second,
 // means the user's colours will override the default finch colours if
 // any of them share the same key.
-$-palette: map.merge($-finch-colors, $colors);
+$-palette: map.merge($-all-finch-colors, $colors);
+// now that the `$-palette` contains all of the colors (default and user-defined), we iterate
+// over all of them and produce the color variations for every color. This gives us the certainty
+// that the value of each item in the `$-palette` will always be a map, and have consistent keys
 @each $name, $val in $-palette {
   $-palette: map.set($-palette, $name, create-variants($val));
 }
 
 // initialise an empty map
 $-shades-map: ();
-// every colour in the palette will become a key in the $shades map,
-// the value of which will be another map, containing the 11 shaded
-// values of the original colour.
+// the base variation of every colour in the palette will become a key in the $shades map,
+// the value of which will be another map, containing the 11 shaded values of the original colour.
 @each $name, $clr in $-palette {
   $-shades-map: map.set($-shades-map, $name, create-shades(map.get($clr, base)));
 }
 
-/// /*  --------------------------------  *\
-///  *  COLOR FUNCTIONS
-/// \*  --------------------------------  */
-
 /// USE
 /// ----------------
-/// The 'use' function provides a shorthand for accessing a value in the `$palette` map
-/// that the color module defines. It also accepts an optional `$shade` parameter, that will
-/// adjust the color to be lighter (1000) or darker (0).
+/// The 'use' function provides a shorthand for accessing a value in the `$-palette` map
+/// It also accepts an optional `$variant` parameter, that will adjust the color to be lighter (1000) or darker (0), or
+/// will access one of the pre-defined 'variants' (e.g. 'dark', 'light', 'vivid' etc.).
 /// @param $key {String} one of the keys from the color-palette map.
-/// @param $shade {Number} a number from 0 - 1000, in increments of 100.
+/// @param $variant {Number|String} a number from 0 - 1000, in increments of 100, or a string, one of:
+/// 'base', 'dark', 'light', 'transparent', 'translucent', 'grayscale', 'dull', 'vivid'
 ///
 @function use($key, $variant: null) {
   $spec-values: list.join(config.$global-values, (currentColor));
@@ -94,12 +113,21 @@ $-shades-map: ();
   @return null;
 }
 
+/// The `use` mixin consumes the `use` function and then sets some defaults and color
+/// properties based on that used color. Firstly, the color will be applied to the 'color'
+/// property by default, but this can be overridden, and any list of properties can be targeted.
+/// The mixin will also then construct the `transition` property so that every targeted property
+/// will smoothly transition its color.
+/// `hover` and `focus` states are defined, and the base color's light or dark variants are applied,
+/// depending on whether the color itself is considered 'light' or 'dark'.
 @mixin use($key, $shade: base, $target: color, $options: null) {
   $color: use($key, $shade);
   $transition: null;
 
   $states: (hover, focus);
   @if meta.type-of($target) == list {
+    // a list of properties has been supplied,
+    // iterate, and set the color on each one, also build up the 'transition' string
     @each $item in $target {
       #{$item}: $color;
       @if $transition != null {
@@ -109,6 +137,9 @@ $-shades-map: ();
       }
 
       @each $state in $states {
+        // set a color variant for `hover` and `focus` states.
+        // if the color has a lightness of < 50%, it is considered 'dark' and therefore the 'light'
+        // variant is applied, and vice versa.
         &:#{$state} {
           @if $options and map.get($options, $state) {
             #{$item}: map.get($options, $state);
@@ -121,9 +152,11 @@ $-shades-map: ();
       }
     }
   } @else {
+    // `$target` is a single property, set the color on it, and then write the transition string
     #{$target}: $color;
     $transition: #{$target} .2s linear;
 
+    // apply `hover` and `focus` states, using the same 'light' - 'dark' logic as above
     @each $state in $states {
       &:#{$state} {
         @if $options and map.get($options, $state) {
@@ -137,6 +170,7 @@ $-shades-map: ();
     }
   }
 
+  // finally, set the `transition` property to the constructed value.
   transition: #{$transition};
 }
 
@@ -154,7 +188,7 @@ $-shades-map: ();
 ///     @include clr.theme(#222, #f7f8f9);
 ///   }
 /// ```
-@mixin theme($background, $foreground) {
+@mixin theme($background, $foreground, $accent) {
   $contrast\bg-fg: contrast($background, $foreground);
   $contrast\bg-ac: contrast($background, $accent);
 
@@ -163,17 +197,19 @@ $-shades-map: ();
   * {
     color: inherit;
   }
+
+  @content;
 }
 
 /// COMPLEMENTARY
 /// ----------------
 /// Returns a color or map of shades for the color that is the complement of the specified color.
 /// @param $color {Color} the base color that will be used to calculate the complement and its shades.
+/// @param $variant {Number|String} either a number 0, 100...900, 1000, or a string representing a color 'variant'.
 /// @param $shades {Boolean} determines if the entire 'shades' map should be returned, or just one specific colour value.
 /// @return {Map} a map of 'base' and 'complement', which will have values of either a single colour, or of a map of shades.
-@function complementary($clr, $shades: false) {
-  $clr: map.get($-palette, $clr);
-  @if meta.type-of($clr) == map { $clr: map.get($clr, base); }
+@function complementary($clr, $variant: base, $shades: false) {
+  $clr: map.get($-palette, $clr, $variant);
   // generate the complementary colour
   $complement: color.adjust($clr, $hue: 180deg);
 
@@ -199,13 +235,13 @@ $-shades-map: ();
 /// ----------------
 /// Returns a color, or map of shades based on the 2 'analogous' colors of the specified color.
 /// @param $color {Color} the base color that will be used to calculate the analogous palette and their shades.
+/// @param $variant {Number|String} either a number 0, 100...900, 1000, or a string representing a color 'variant'.
 /// @param $shades {Boolean} determines whether or not the shades maps should be created.
 /// @param $dir {String} one of either 'clockwise' or 'anti-clockwise/anticlockwise' will be understood and will determine how
 /// the hue is adjusted.
 /// @return {Color | Map} a single color value by default, or the whole map of shades for both analogous colours when `$maps` is `true`.
-@function analogous($clr, $shades: base, $dir: 'clockwise') {
-  $clr: map.get($-palette, $clr);
-  @if meta.type-of($clr) == map { $clr: map.get($clr, base); }
+@function analogous($clr, $variant: base, $shades: base, $dir: 'clockwise') {
+  $clr: map.get($-palette, $clr, $variant);
 
   $interval: 30deg;
   @if list.index(('anti-clockwise', 'anticlockwise'), $dir) {
@@ -236,11 +272,11 @@ $-shades-map: ();
 /// ----------------
 /// Returns a color, or map of shades based on the 2 other 'triadic' colors that extrapolate from the 'base'.
 /// @param $color {Color} the base color that will be used to calculate the triadic palette and their shades.
+/// @param $variant {Number|String} either a number 0, 100...900, 1000, or a string representing a color 'variant'.
 /// @param $shades {Boolean} determines if the entire 'shades' map should be returned for each color, or just the color values.
 /// @return {Map} either a map of 3 colors, or a map of 3 maps (that have all the colors shades).
-@function triadic($clr, $shades: false) {
-  $clr: map.get($-palette, $clr);
-  @if meta.type-of($clr) == map { $clr: map.get($clr, base); }
+@function triadic($clr, $variant: base, $shades: false) {
+  $clr: map.get($-palette, $clr, $variant);
 
   $secondary-color: color.adjust($clr, $hue: 120deg);
   $tertiary-color: color.adjust($clr, $hue: 240deg);
@@ -266,21 +302,21 @@ $-shades-map: ();
 /// ----------------
 /// Returns a color, or may of shades based on the 3 other 'tetradic' colors that extrapolate from the 'base'.
 /// @param $color {Color} the base color that will be used to calculate the triadic palette and their shades.
+/// @param $variant {Number|String} either a number 0, 100...900, 1000, or a string representing a color 'variant'.
 /// @param $key {String} one of 'secondary', 'tertiary' or 'quaternary' - representing which of the 3 colors should be referenced.
 /// @param $shade {Number} a number from 0 - 1000, in increments of 100 (e.g. 300, 400, 500...) that represents the lightness
 /// value of the color that is to be returned (where `0` is `black` and `1` is `white`).
 /// @param $maps {Boolean} determines if the entire 'shades' map should be returned, or just one specific color value.
 /// @return {Color | Map} a single color value by default, or the whole map of shades for all of the other tetradic colours when `$maps` is `true`.
-@function tetradic($clr, $shades: false) {
+@function tetradic($clr, $variant: base, $shades: false) {
   $clr: map.get($-palette, $clr);
-  @if meta.type-of($clr) == map { $clr: map.get($clr, base); }
 
   $secondary-color: color.adjust($clr, $hue: 90deg);
   $tertiary-color: color.adjust($clr, $hue: 180deg);
   $quartenary-color: color.adjust($clr, $hue: 270deg);
 
   @if $shades {
-    $base-shades: create-shades($base);
+    $base-shades: create-shades($clr);
     $secondary-shades: create-shades($secondary-color);
     $tertiary-shades: create-shades($tertiary-color);
     $quartenary-shades: create-shades($quartenary-color);
@@ -292,7 +328,7 @@ $-shades-map: ();
     );
   }
 
-  @return (base: $clr, $secondary: $secondary-color, tertiary: $tertiary-color, quartenary: $quartenary-color);
+  @return (base: $clr, secondary: $secondary-color, tertiary: $tertiary-color, quartenary: $quartenary-color);
 
   @warn 'Could not create tetradic pallette for color "#{$clr}"';
   @return null;

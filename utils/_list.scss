@@ -21,9 +21,12 @@
  * 10. list-slice: return a new list that is a subset of the old list, determined by a 'start' and 'end' index.
  * 11. list-shift: move all items of a list by a specified interval, e.g. `$interval: 1` would move everything one place to the right, with the last item wrapping to the beginning.
  * 12. list-has: checks if a list contains a given item. This can work recursively, to check all nested lists, and 'fuzzy' to check for inexact matches.
+ * 13. @todo list-filter
+ * 14. @todo list-map
  *
  */
 
+/// [ 1 ]
 /// LIST REVERSE
 /// ----------
 /// The `list-reverse` function takes a list and returns a new list that has the
@@ -63,6 +66,7 @@
   @debug "----------";
 }
 
+/// [ 2 ]
 /// LIST CONCAT
 /// ----------
 /// The `list-concat` function takes a list and joins all items together into a string
@@ -101,6 +105,7 @@
   @debug "----------";
 }
 
+/// [ 3 ]
 /// LIST LAST INDEX
 /// ----------
 /// The `list-last-index` function returns the index of the final occurrence
@@ -130,6 +135,7 @@
   @debug "----------";
 }
 
+/// [ 4 ]
 /// LIST PREPEND
 /// ----------
 /// The `list-prepend` function creates a new list with the given item added to the *start*
@@ -151,6 +157,7 @@
   @debug "----------";
 }
 
+/// [ 5 ]
 /// LIST INSERT
 /// ----------
 /// The `list-insert` function adds an item to a list at a specified index. If no
@@ -198,6 +205,7 @@
   @debug "----------";
 }
 
+/// [ 6 ]
 /// LIST REMOVE
 /// ----------
 /// The `list-remove` function creates a new list that does *not* contain a specified
@@ -241,6 +249,7 @@
   @debug "----------";
 }
 
+/// [ 7 ]
 /// LIST REMOVE NTH
 /// ----------
 /// The `list-remove-nth` function removes the item at a given index.
@@ -276,6 +285,7 @@
   @debug "----------";
 }
 
+/// [ 8 ]
 /// LIST REPLACE
 /// ----------
 /// The `list-replace` function replaces a specified item with a given replacement.
@@ -321,6 +331,7 @@
   @debug "----------";
 }
 
+/// [ 9 ]
 /// LIST REPLACE NTH
 /// ----------
 /// The `list-replace-nth` function replaces a list item at a specified index.
@@ -358,6 +369,7 @@
   @debug "----------";
 }
 
+/// [ 10 ]
 /// LIST SLICE
 /// ----------
 /// The `list-slice` function creates a new list that is a subset of the given list,
@@ -400,6 +412,7 @@
   @debug "----------";
 }
 
+/// [ 11 ]
 /// LIST SHIFT
 /// ----------
 /// The `list-shift` function moves the items in a list by a given interval. The list items will
@@ -442,6 +455,7 @@
   @debug "----------";
 }
 
+/// [ 12 ]
 /// LIST HAS
 /// ----------
 /// The `list-has` function determines whether or not a list contains a given item.

@@ -20,6 +20,7 @@
  *
  */
 
+/// [ 1 ]
 /// MAP GET NTH
 /// ----------
 /// The `map-get-nth` function returns the value of a map item located at a
@@ -50,6 +51,7 @@
   @debug "----------";
 }
 
+/// [ 2 ]
 /// MAP INDEX
 /// ----------
 /// The `map-index` function returns the index of a given item in a map. The
@@ -88,6 +90,7 @@
   @debug "----------";
 }
 
+/// [ 3 ]
 /// MAP GET NEXT
 /// ----------
 /// The `map-get-next` function returns the value of the next item in a map, relative
@@ -121,6 +124,7 @@
   @debug "----------";
 }
 
+/// [ 4 ]
 /// MAP GET PREV
 @function map-get-prev($map, $current, $search: key) {
   // type safety
@@ -145,6 +149,7 @@
   @debug "----------";
 }
 
+/// [ 5 ]
 /// MAP CONCAT
 /// ----------
 /// The `map-concat` function returns a string representation of a map.
@@ -187,6 +192,7 @@
   @debug "----------";
 }
 
+/// [ 6 ]
 /// MAP SET KEYS
 /// ----------
 /// The `map-set-keys` function sets multiple keys in a map to a common value. The keys are specified
@@ -230,6 +236,7 @@
   @debug "----------";
 }
 
+/// [ 7 ]
 /// MAP SET MANY
 /// ----------
 /// The `map-set-many` function sets multiple keys in a map to a common value. The keys that should be
