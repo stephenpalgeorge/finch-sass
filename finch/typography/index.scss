@@ -4,9 +4,6 @@
 @use '../config/mixins' as m;
 @use 'variables' as vars;
 
-@forward 'functions';
-@forward 'variables';
-
 $-utility-allowed: (
   font-size, font-weight, font-family, line-height, letter-spacing, text-indent,
   text-transform, word-spacing, word-break

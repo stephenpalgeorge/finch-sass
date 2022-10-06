@@ -2,7 +2,7 @@
 @use 'sass:map';
 @use '../config';
 @use '../config/mixins' as m;
-@use '../utils' as *;
+@use '../utils';
 
 $-utility-allowed: (
   // margin properties
@@ -38,7 +38,7 @@ $keywords: () !default;
 $-presets: map.merge($-finch-keywords, $keywords);
 $-all-sizes: map.merge(config.$modular-scale, $-presets);
 
-@forward './mixins' with ($all-sizes: $-all-sizes, $utils: $layout-utils);
+@forward 'mixins' with ($all-sizes: $-all-sizes, $utils: $layout-utils);
 
 /// USE FUNCTION
 /// ----------
@@ -82,10 +82,10 @@ $-prop-values: (
   $-prop-values: map.set($-prop-values, $prop, null);
 }
 
-$-prop-values: map-set-many($-prop-values, width, $-border-width-values);
-$-prop-values: map-set-many($-prop-values, radius, $-border-radius-values);
-$-prop-values: map-set-many($-prop-values, padding, map.merge(config.$modular-scale, $-presets));
-$-prop-values: map-set-many($-prop-values, margin, map.merge(config.$modular-scale, $-presets));
+$-prop-values: utils.map-set-many($-prop-values, width, $-border-width-values);
+$-prop-values: utils.map-set-many($-prop-values, radius, $-border-radius-values);
+$-prop-values: utils.map-set-many($-prop-values, padding, map.merge(config.$modular-scale, $-presets));
+$-prop-values: utils.map-set-many($-prop-values, margin, map.merge(config.$modular-scale, $-presets));
 
 @each $prop in $utils {
   @if list.index($-utility-allowed, $prop) {

@@ -1,1 +1,5 @@
-@forward 'color' as clr-*;
+@forward 'finch/color' as clr-*;
+@forward 'finch/config' as cnf-*;
+@forward 'finch/layout' as lyt-*;
+@forward 'finch/typography' as typ-*;
+@forward 'finch/utils' as util-*;
