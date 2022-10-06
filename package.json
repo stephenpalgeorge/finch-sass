@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A sass utilities library",
   "main": "index.scss",
+  "engines": {
+    "node": "17.3.1"
+  },
   "scripts": {
     "build": "rm -rf build && sass src:build",
     "build:demo": "rm -rf demo/styles && sass demo/scss:demo/styles && http-server -c-1 demo"
