@@ -1,0 +1,93 @@
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:map';
+@use 'variables' as vars;
+
+$-finch-durations: (
+  slow: vars.$duration\slow,
+  medium: vars.$duration\base,
+  fast: vars.$duration\fast,
+);
+$speeds: () !default;
+$-durations: map.merge($-finch-durations, $speeds);
+
+$-finch-delays: (
+  slow: vars.$delay\slow,
+  medium: vars.$delay\medium,
+  fast: vars.$delay\fast,
+);
+$delays: () !default;
+$-delays: map.merge($-finch-delays, $delays);
+
+$-finch-timing-functions: (
+  bounce-back: vars.$bezier\bounce-back,
+  center-race: vars.$bezier\center-race,
+  take-off: vars.$bezier\take-off,
+  teleport: vars.$bezier\teleport,
+  wind-up: vars.$bezier\wind-up,
+);
+$timing-functions: () !default;
+$-timing-functions: map.merge($-finch-timing-functions, $timing-functions);
+
+$-animation-primitives: (
+  fade-in: (
+    from: (opacity: 0),
+    to: (opacity: 1),
+  ),
+  fade-out: (
+    from: (opacity: 1),
+    to: (opacity: 0),
+  ),
+  fly-from-right: (
+    from: (transform: translateX(2rem)),
+    to: (transform: translateX(0)),
+  ),
+  fly-from-left: (
+    from: (transform: translateX(-2rem)),
+    to: (transform: translateX(0)),
+  )
+  // @todo - build out this map with more animations
+);
+
+@mixin animate($label, $transitions, $config) {
+  @if meta.type-of($transitions) != list { @error 'Second argument `$transitions` must be of type "list"'; }
+  @if meta.type-of($config) != map { @error 'Third argument `$config` must be of type "map"'; }
+  $-valid-config: (delay, direction, duration, fill-mode, iteration-count, play-state, timing-function);
+  @each $key in map.keys($config) {
+    @if not list.index($-valid-config, $key) {
+      @warn '"#{$key}" is not a valid key for animation config';
+    }
+  }
+
+  @keyframes #{$label} {
+    from {
+      @each $transition in $transitions {
+        $current-transition: map.get($-animation-primitives, $transition);
+        @each $key, $value in map.get($current-transition, from) {
+          #{$key}: $value;
+        }
+      }
+    }
+    to {
+      @each $transition in $transitions {
+        $current-transition: map.get($-animation-primitives, $transition);
+        @each $key, $value in map.get($current-transition, to) {
+          #{$key}: $value;
+        }
+      }
+    }
+  }
+
+  .#{$label} {
+    animation-name: #{$label};
+    @each $key, $value in $config {
+      @if $key == duration { $value: map.get($-durations, $value); }
+      @if $key == delay { $value: map.get($-delays, $value); }
+      @if $key == timing-function { $value: map.get($-timing-functions, $value); }
+      animation-#{$key}: $value;
+    }
+  }
+}
+
+// in theory, constructing animations should be as simple as this now:
+// @include animate(appear, (fade-in, fly-from-right), (duration: slow, timing-function: bounce-back));

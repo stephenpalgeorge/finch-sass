@@ -2,3 +2,65 @@
 @forward 'map';
 @forward 'math';
 @forward 'string';
+
+@mixin target($browser: null, $os: null, $version: null) {
+  // BROWSER COMPATIBILITY
+  // Webkit
+  @if $browser == 'webkit' and ($version > 21 and $version < 29) {
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      @content;
+    }
+  }
+
+  // Chrome 29+
+  @if $browser == 'chrome' {
+    @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+      @content;
+    }
+  }
+
+  // IE 11
+  @if ($browser == 'ie' or $browser == 'internet explorer') {
+    @media all and (-ms-high-contrast: none) {
+      @content;
+    }
+  }
+
+  // Edge
+  @if $browser == 'edge' {
+    @supports (-ms-ime-align: auto) {
+      @content;
+    }
+  }
+
+  // Firefox
+  @if $browser == 'firefox' {
+    @supports (-moz-appearance: none) {
+      @content;
+    }
+  }
+
+  // Safari
+  @if $browser == 'safari' {
+    @media not all and (min-resolution: .001dpcm) {
+      @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+        @content;
+      }
+    }
+  }
+
+  // OPERATING SYSTEMS
+  @if $os == 'ios' {
+    @supports (-webkit-touch-callout: none) {
+      @content;
+    }
+  }
+
+  // this isn't ideal, but just uses the assumption that all android browsers must
+  // run on webkit...this is the same `@media` query as for `$browser == webkit`
+  @if $os == 'android' {
+    @media (-webkit-min-device-pixel-ratio: 0) {
+      @content;
+    }
+  }
+}

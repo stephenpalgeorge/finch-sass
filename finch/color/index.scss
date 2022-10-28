@@ -54,6 +54,7 @@ $-finch-context-colors: (
   invalid: map.get($-finch-colors, red),
   warning: map.get($-finch-colors, yellow),
   info: map.get($-finch-colors, blue),
+  alert: map.get($-finch-colors, orange),
   success: map.get($-finch-colors, green),
   valid: map.get($-finch-colors, green),
   disabled: map.get($-finch-colors, dark-grey),
@@ -120,8 +121,8 @@ $-shades-map: ();
 /// will smoothly transition its color.
 /// `hover` and `focus` states are defined, and the base color's light or dark variants are applied,
 /// depending on whether the color itself is considered 'light' or 'dark'.
-@mixin use($key, $shade: base, $target: color, $options: null) {
-  $color: use($key, $shade);
+@mixin use($key, $variant: base, $target: color, $options: null) {
+  $color: use($key, $variant);
   $transition: null;
 
   $states: (hover, focus);
@@ -196,9 +197,17 @@ $-shades-map: ();
   color: $foreground;
   * {
     color: inherit;
+    border-color: currentColor;
+    text-decoration-color: currentColor;
   }
 
-  @content;
+  [data-theme-color="accent"] {
+    color: $accent;
+  }
+
+  [data-theme-bg="accent"] {
+    background-color: $accent;
+  }
 }
 
 /// COMPLEMENTARY
@@ -341,6 +350,7 @@ $-shades-map: ();
 @each $prop in $utils {
   @if list.index($-utility-allowed, $prop) {
     @include m.gen-utils($prop, $-palette);
+    @include m.gen-utils($prop, $-shades-map);
   }
 }
 

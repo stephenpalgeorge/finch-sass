@@ -1,5 +1,11 @@
+$scale-base: 1rem !default;
+$detail-scale-base: 2px !default;
+
 @use 'sass:map';
-@use 'variables' as vars;
+@use 'variables' as vars with (
+  $scale-base: $scale-base,
+  $detail-base: $detail-scale-base,
+);
 
 // show debug in the console?
 $debug: false !default;

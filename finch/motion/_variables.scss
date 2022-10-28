@@ -1,0 +1,18 @@
+// durations
+$duration\base: .3s;
+$duration\slow: 2.66 * $duration\base;
+$duration\medium: $duration\base;
+$duration\fast: .5 * $duration\base;
+
+// delays
+$delay\base: .3s;
+$delay\slow: 2.66 * $delay\base;
+$delay\medium: $delay\base;
+$delay\fast: .5 * $delay\base;
+
+// timing functions
+$bezier\bounce-back: cubic-bezier(.3, .2, .4, 1.3);
+$bezier\center-race: cubic-bezier(.7, 0, .3, 1);
+$bezier\take-off: cubic-bezier(.7, 0, 1, .3);
+$bezier\teleport: cubic-bezier(0, .7, .3, 1);
+$bezier\wind-up: cubic-bezier(.6, -.4, .35, 1);

@@ -1,0 +1,56 @@
+/**
+ *
+ * [ 1 ] - remove default margins and padding
+ * [ 2 ] - make everything 'border-box'
+ * [ 3 ] - set smooth scrolling
+ * [ 4 ] - set some sensible defaults for body contents
+ * [ 5 ] - make images easier to work with
+ * [ 6 ] - make sure all form elements get their font properties from their parent context
+ * [ 7 ] - remove animations/transitions for users that prefer reduced motion
+ *
+ */
+
+*,
+*::before,
+*::after {
+  margin: 0; // [ 1 ]
+  padding: 0; // [ 1 ]
+  box-sizing: border-box; // [ 2 ]
+}
+
+html:focus-within {
+  scroll-behavior: smooth; // [ 3 ]
+}
+
+body {
+  min-height: 100vh; // [ 4 ]
+  text-rendering: optimizeSpeed; // [ 4 ]
+  line-height: 1.5; // [ 4 ]
+}
+
+img, picture {
+  display: block; // [ 5 ]
+  max-width: 100%; // [ 5 ]
+}
+
+input,
+button[type="submit"],
+textarea,
+select {
+  font: inherit; // [ 6 ]
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto; // [ 7 ]
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important; // [ 7 ]
+    animation-iteration-count: 1 !important; // [ 7 ]
+    transition-duration: 0.01ms !important; // [ 7 ]
+    scroll-behavior: auto !important; // [ 7 ]
+  }
+}

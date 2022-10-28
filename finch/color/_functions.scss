@@ -43,12 +43,12 @@
   $variants: (
     base: $color,
     dark: color.scale($color, $lightness: -20%),
-    light: color.scale($color, $lightness: 30%),
+    bright: color.scale($color, $lightness: 30%),
     transparent: color.scale($color, $alpha: -80%),
     translucent: color.scale($color, $alpha: -25%),
     grayscale: color.grayscale($color),
     dull: color.scale($color, $saturation: -30%),
-    vivid: color.scale($color, $saturation: 20%),
+    vivid: color.scale($color, $saturation: 40%),
   );
 
   @return $variants;
